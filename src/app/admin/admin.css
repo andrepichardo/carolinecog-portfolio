@@ -1,0 +1,155 @@
+/* Estilos del CMS.
+   Van aparte de los del lienzo: el panel es una interfaz normal y no debe
+   heredar la unidad de diseño `--u` ni la tipografía del portafolio. */
+
+.admin {
+  --admin-bg: #ffffff;
+  --admin-surface: #f6f6f5;
+  --admin-border: #e2e2df;
+  --admin-text: #1b1b1a;
+  --admin-muted: #6f6f6a;
+  --admin-accent: #1b1b1a;
+  --admin-danger: #b3261e;
+
+  min-height: 100dvh;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.admin input,
+.admin textarea,
+.admin select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Los botones solo heredan la tipografía: si heredaran también el color,
+   ganarían por especificidad a las utilidades de texto y el rótulo de los
+   botones oscuros quedaría invisible. */
+.admin button {
+  font: inherit;
+}
+
+.admin-field {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-bg);
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.admin-field:focus-visible {
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px rgb(27 27 26 / 0.08);
+}
+
+.admin-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-bottom: 5px;
+  color: var(--admin-muted);
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.admin-btn:hover:not(:disabled) {
+  background: var(--admin-surface);
+}
+
+.admin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-btn--primary {
+  background: var(--admin-accent);
+  border-color: var(--admin-accent);
+  color: #fff;
+}
+
+.admin-btn--primary:hover:not(:disabled) {
+  background: #000;
+}
+
+.admin-btn--danger {
+  color: var(--admin-danger);
+  border-color: color-mix(in srgb, var(--admin-danger) 35%, var(--admin-border));
+}
+
+.admin-card {
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-bg);
+  padding: 16px;
+}
+
+/* --- Lienzo del editor -------------------------------------------------- */
+
+.editor-canvas {
+  position: relative;
+  background: var(--rm-bg, #efefef);
+  outline: 1px solid var(--admin-border);
+  transform-origin: 0 0;
+}
+
+.editor-block {
+  position: absolute;
+  outline: 1px dashed rgb(0 0 0 / 0.28);
+  cursor: move;
+  user-select: none;
+}
+
+.editor-block[data-selected='true'] {
+  outline: 2px solid #2f6fed;
+  z-index: 9999 !important;
+}
+
+.editor-block__label {
+  position: absolute;
+  top: -18px;
+  left: 0;
+  font-size: 10px;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 0.72);
+  color: #fff;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.editor-handle {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: #2f6fed;
+  border: 2px solid #fff;
+  cursor: nwse-resize;
+}

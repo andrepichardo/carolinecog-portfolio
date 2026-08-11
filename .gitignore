@@ -1,0 +1,36 @@
+# dependencias
+/node_modules
+/.pnp
+.pnp.*
+
+# next
+/.next/
+/out/
+next-env.d.ts
+
+# producción
+/build
+
+# entorno
+.env
+.env*.local
+
+# prisma
+/prisma/generated
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# material de referencia: los assets originales pesan ~49 MB.
+# El modelo y los reportes sí se versionan (son la fuente del importador).
+/_reference/assets/
+/_reference/shots/
+/_reference/snippets/
+/_reference/fonts/

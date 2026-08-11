@@ -1,0 +1,659 @@
+==============================================================================
+ESTILOS DE TEXTO DEL PROYECTO
+==============================================================================
+H2 DM                  | DM Sans 36pt           w 400 62px/61 ls-3.3 none #00000064
+H1 Desk B              | DM Sans                w 400 48px/61 ls-3.3 none #00000064
+H2 Desk                | Benton Modern D Cn     w 400 46px/43 ls0 none #00000064
+H2 Desk (Copy)         | DM Sans 36pt           w 300 40px/40 ls0 none #00000064
+Big Link Desk          | Aktiv Grotesk          w 600 29px/32 ls-1.4 none #00000064
+P2 Desk                | ??? (wtqc)             w 700 14px/17 ls0 uppercase #00000064
+P4 Desk                | DM Sans                w 400 12px/12 ls-0.4 none #23232364
+P4 Desk B              | Aktiv Grotesk          w 700 10px/12 ls-0.4 none #00000064
+H1 Mob W               | Aktiv Grotesk          w 600 43px/42 ls-2.5 none #FFFFFF64
+H1 Mob B               | Aktiv Grotesk          w 600 43px/42 ls-2.5 none #00000064
+H2 Mob                 | Aktiv Grotesk          w 600 29px/32 ls-1.4 none #00000064
+P1 Mob                 | Aktiv Grotesk          w 600 21px/25 ls-1.3 none #00000064
+P2 Mob All caps (Copy) | ??? (wtqc)             w 700 14px/17 ls0 uppercase #00000064
+P2 Mob All caps White  | ??? (wtqc)             w 700 14px/17 ls0 uppercase #FFFFFF64
+P3 Mob                 | Aktiv Grotesk          w 700 10px/14 ls-0.4 none #00000064
+P3 Mob W               | Aktiv Grotesk          w 700 10px/14 ls-0.4 none #FFFFFF64
+Big Link Mob           | DM Sans 18pt Light     w 300 24px/24 ls-1.4 none #00000064
+New style              | Bodoni Moda            w 700 20px/22 ls0 capitalize #ffffff64
+Bodoni small title     | Bodoni Moda            w 400 14px/22 ls0 capitalize #ffffff64
+New style              | DM Sans 36pt           w 700 18px/17 ls0 uppercase #00000064
+New style              | Benton Modern D Cn     w 400 24px/22 ls0 None #00000064
+P1 DM                  | DM Sans                w 400 18px/18 ls-1 none #00000064
+New style              | Benton Modern D Cn     w 400 14px/17 ls0 None #00000064
+P4 Benton              | Benton Modern D Cn     w 400 24px/24 ls0 None #00000064
+New style              | DM Sans 36pt           w 400 62px/61 ls-3.3 none #00000064
+H1 Desk W              | Aktiv Grotesk          w 600 62px/61 ls-3.3 none #ffffff64
+P1 Desk                | Aktiv Grotesk          w 600 29px/32 ls-1.4 none #00000064
+P3 Desk All caps       | Aktiv Grotesk          w 700 10px/12 ls-0.4 none #00000064
+New                    | Austin                 w 400 47px/55 ls0.6 uppercase #00000064
+
+==============================================================================
+ESTILOS DE ENLACE
+==============================================================================
+{
+ "global": [],
+ "project": [
+  {
+   "style": {
+    "link": {
+     "textColor": "00000064",
+     "type": "None",
+     "color": "00000064",
+     "size": 1,
+     "padding": 0
+    },
+    "hover": {
+     "textColor": "0000003c",
+     "type": "None",
+     "color": "00000064",
+     "size": 1,
+     "padding": 0
+    },
+    "current": {
+     "textColor": "00000064",
+     "type": "Solid",
+     "color": "C7C7C764",
+     "size": 4,
+     "padding": -9
+    }
+   },
+   "name": "link-style-94d9d3e9-ce07-4a31-9bd2-3100c91a4481",
+   "label": "Links Contacts",
+   "_id": "65e90c7a37d1470036a5f026"
+  },
+  {
+   "style": {
+    "link": {
+     "textColor": "FFFFFF64",
+     "type": "None",
+     "color": "00000064",
+     "size": 1,
+     "padding": 0
+    },
+    "hover": {
+     "textColor": "FFFFFF64",
+     "type": "None",
+     "color": "FFFFFF64",
+     "size": 4,
+     "padding": -10
+    },
+    "current": {
+     "textColor": "FFFFFF64",
+     "type": "Solid",
+     "color": "FFFFFF14",
+     "size": 4,
+     "padding": -10
+    }
+   },
+   "name": "link-style-37d7e20a-6080-4606-bb95-f256bd5bfbb2",
+   "label": "Menu_Light_Mob",
+   "_id": "65e90c7a37d1470036a5f026"
+  },
+  {
+   "style": {
+    "link": {
+     "textColor": "00000064",
+     "type": "None",
+     "color": "00000064",
+     "size": 1,
+     "padding": 0
+    },
+    "hover": {
+     "textColor": "00000064",
+     "type": "Solid",
+     "color": "00000064",
+     "size": 4,
+     "padding": -10
+    },
+    "current": {
+     "textColor": "00000064",
+     "type": "S
+
+==============================================================================
+MENU GLOBAL (aboveAllWidgets)
+==============================================================================
+- Hamburger            type=shape      x=1046.38 y=27.04 w=1068 h=2487 z=332
+    anim[click] steps=[{"duration": 0, "dx": -1062, "dy": 0, "acceleration": "ease-out-back", "use_move": true}] trigger=['6a342701159651fd6e8f0f44', '6a3426fe6429e3c8640ce899', '6a3426fec7f2db8866a7f34c']
+- Hamburger            type=text       x=1048 y=-5.5 w=480 h=165 z=333
+    text: 'work'
+    text: 'about'
+    text: 'contact'
+    anim[click] steps=[{"duration": 0, "dx": -1062, "dy": 0, "acceleration": "ease-out-back", "use_move": true}] trigger=['6a342701159651fd6e8f0f44', '6a3426fe6429e3c8640ce899', '6a3426fec7f2db8866a7f34c']
+- Hamburger            type=shape      x=22.18 y=11.8 w=41 h=49 z=334
+    anim[click] steps=[{"duration": 0, "acceleration": "ease-both", "from_opacity": 0, "use_opacity": true, "opacity": 100}] trigger=['6a342701159651fd6e8f0f44', '6a3426fec7f2db8866a7f34c', '6a3426fe6429e3c8640ce899']
+- Hamburger            type=shape      x=20.18 y=21.5 w=45 h=31 z=335
+    anim[click] steps=[{"duration": 0, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 0}] trigger=['6a342701159651fd6e8f0f44', '6a3426fec7f2db8866a7f34c', '6a3426fe6429e3c8640ce899']
+
+==============================================================================
+PAGINA: main  (num 1, titulo 'main')
+  alto desktop: 2865px @1024   alto movil: 1370px @320
+==============================================================================
+  [picture   ]                    x=-276 y=-247 w=424 h=66 z=323  fixed=c
+      movil: x=-84 y=-231 w=120 h=26 hidden=None
+      img: Image-d5e108e7-0cc2-4f8c-b692-346d7ee5a360.svg
+      crop x=0 y=0 w=1012 h=140 orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+      ANIM[scroll] [{"speed": 1, "acceleration": "ease-both", "start_point": "bottom", "start_offset": 0, "from_scale": 100, "use_move": true, "use_scale": true, "dx": -136, "dy": -101, "scale": 36}]
+  [background]                    x=None y=None w=None h=None z=None
+      movil: x=None y=None w=None h=None hidden=None
+  [text      ] Heading            x=-114.5 y=5.95 w=731 h=283.91 z=301  fixed=c
+      movil: x=-21.5 y=-101.2 w=235 h=92 hidden=False
+      · [H2 Desk (Copy)] "Ciao, I'm Caroline. \nAn object and spatial designer."
+      · [H2 Desk (Copy)] 'My experience spans different scales, from executing corporate and residential renovations to developing custom furniture and product solutions. \r'
+  [picture   ] Project1           x=235 y=811 w=327 h=456 z=302
+      movil: x=87 y=306.35 w=135 h=181 hidden=False
+      img: image-67b3982a-436b-4f35-834b-ff61984341db.jpg
+      crop x=654 y=102 w=692 h=965 orig=2048x1152 scale=0.47259
+      angle: 10deg
+      radius: 200
+      clickLink -> 6a327c0014210924707e87e4 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [shape     ] Link_Project1      x=197 y=820 w=428 h=469 z=310
+      movil: x=78 y=304 w=150 h=176 hidden=False
+      shape tp=rectangle bg=#FFFFFF op=0 radius=0
+  [picture   ] Project2           x=71 y=1380 w=636 h=400 z=303
+      movil: x=23 y=514 w=253 h=174 hidden=False
+      img: image-da29d069-26ba-4805-a845-187c598d65f6.png
+      crop x=482 y=543 w=2544 h=1600 orig=3508x2480 scale=0.25
+      angle: -2deg
+      clickLink -> 69efd65508d2323e999ec71e target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [shape     ] Link_Project2      x=146.27 y=1393.61 w=464.64 h=383.1 z=309
+      movil: x=48.85 y=531.26 w=183.85 h=156.96 hidden=None
+      shape tp=rectangle bg=#FFFFFF op=0 radius=0
+  [picture   ] Project3           x=64 y=1762.94 w=704 h=469 z=305
+      movil: x=20 y=688 w=280 h=179 hidden=False
+      img: image-1ba95e9d-8927-4b42-8a0b-eb4e23d5b573.png
+      crop x=89 y=62 w=1354 h=902 orig=1536x1024 scale=0.52
+      clickLink -> 6a346165b69ae66625484c81 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [shape     ] Link_Project3      x=75 y=1940 w=695 h=220 z=322
+      movil: x=20 y=743 w=280 h=89 hidden=False
+      shape tp=rectangle bg=#FFFFFF op=0 radius=0
+
+==============================================================================
+PAGINA: about  (num 2, titulo 'about')
+  alto desktop: 753px @1024   alto movil: 1267px @320
+==============================================================================
+  [picture   ]                    x=-412 y=-344 w=152 h=40 z=330  fixed=c
+      movil: x=None y=None w=None h=None hidden=True
+      img: Image-d5e108e7-0cc2-4f8c-b692-346d7ee5a360.svg
+      crop x=0 y=0 w=1012 h=140 orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [background]                    x=None y=None w=None h=None z=None
+      movil: x=None y=None w=None h=None hidden=None
+  [picture   ]                    x=None y=None w=None h=None z=331  HIDDEN
+      movil: x=-60 y=-233 w=152 h=42 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [text      ]                    x=None y=None w=None h=None z=324  HIDDEN
+      movil: x=20 y=637 w=280 h=60 hidden=False
+      · [None] 'This portfolio brings together selected projects that explore the same ideas in different formats. Each case looks at how structure, composition, texture, and space can support content without competing with it.'
+  [picture   ]                    x=None y=None w=None h=None z=325  HIDDEN
+      movil: x=0 y=384 w=280 h=216 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=NonexNone scale=None
+  [text      ] Heading            x=48 y=128 w=714 h=73 z=301
+      movil: x=20 y=122 w=280 h=155 hidden=None
+      · [None] 'About me.'
+  [text      ]                    x=49 y=192 w=363 h=288 z=302
+      movil: x=20 y=176 w=280 h=168 hidden=None
+      · [P1 DM] 'Born and raised in the Caribbean, I’ve been shaped by the eclectic and layered nature of my environments. As a multidisciplinary designer, my experience spans different scales, from executing corporate and residential renovations to developing furniture and product solutions. \r\r\nI find purpose in the evolution of a project, from research and concept, to the collaborative development of a well-crafted reality. Whether it is a furniture piece or a full-scale interior, I like design that demands attention, not by being bold or loud, but by inspiring stillness.'
+  [picture   ]                    x=500 y=192 w=439 h=288 z=326
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-1a39f942-0389-4bef-a786-8fa44e011d95.png
+      crop x=919 y=1476 w=934 h=613 orig=2448x3408 scale=0.47
+  [text      ]                    x=49 y=589 w=146 h=12 z=303
+      movil: x=19 y=1052 w=146 h=14 hidden=False
+      · [None] 'Experience'
+  [text      ]                    x=299 y=589 w=146 h=12 z=305
+      movil: x=20 y=875 w=146 h=14 hidden=False
+      · [None] 'Education'
+  [text      ]                    x=59 y=610 w=215.76 h=102 z=304
+      movil: x=20 y=902 w=279 h=104 hidden=False
+      · [None] 'MSH Interiorismo ––  Project Manager\n2023––2025 '
+      · [None] 'Xploy Outsourcing — Visual Designer\n2021—2023'
+      · [None] 'PrintArt Productions ––\xa0Furniture Designer\n2021 '
+  [text      ]                    x=309 y=610 w=220.5 h=87 z=306
+      movil: x=19 y=1076 w=273 h=74 hidden=False
+      · [P4 Desk B] 'Master in Product and Furniture Design'
+      · [P4 Desk B] 'Istituto Marangoni '
+      · [P4 Desk B] '2025–2026'
+      · [P4 Desk B] 'Bachelor in Industrial Design\nInstituto Tecnológico de Santo Domingo\n2015–2019'
+
+==============================================================================
+PAGINA: contacts  (num 3, titulo 'contacts')
+  alto desktop: 745px @1024   alto movil: 647px @320
+==============================================================================
+  [picture   ]                    x=-412 y=-344 w=152 h=42 z=321  fixed=c
+      movil: x=-68 y=-233 w=152 h=42 hidden=None
+      img: Image-d5e108e7-0cc2-4f8c-b692-346d7ee5a360.svg
+      crop x=0 y=0 w=1012 h=140 orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+      ANIM[scroll] [{"speed": 1, "acceleration": "ease-both", "start_point": "bottom", "start_offset": 0, "from_scale": 100, "use_move": true, "use_scale": true, "dx": -136, "dy": -101, "scale": 36}]
+  [background]                    x=None y=None w=None h=None z=None
+      movil: x=None y=None w=None h=None hidden=None
+  [text      ] Heading            x=48 y=36.96 w=731 h=183 z=302
+      movil: x=20 y=80 w=270 h=142 hidden=None
+      · [None] '\nLet’s work together .'
+  [text      ] Text               x=48 y=192 w=382 h=108 z=301
+      movil: x=20 y=240 w=252 h=72 hidden=None
+      · [P1 DM] 'I’m open to freelance projects, collaborations, and selected full-time opportunities. '
+      · [P1 DM] 'My work focuses on visual systems across furniture, and spatial contexts. If you’d like to\xa0discuss a project or ask a question,  feel free to reach out.'
+  [text      ]                    x=48 y=384 w=359 h=32 z=303
+      movil: x=20 y=372 w=280 h=24 hidden=None
+      · [None] 'Email'
+  [text      ]                    x=287 y=384 w=227 h=32 z=304
+      movil: x=20 y=520 w=228 h=24 hidden=None
+      · [Big Link Desk] 'Instagram'
+  [text      ]                    x=287 y=424 w=227 h=32 z=305
+      movil: x=20 y=471.18 w=228 h=24 hidden=None
+      · [None] 'LinkedIn'
+
+==============================================================================
+PAGINA: norologio  (num 4, titulo 'project1')
+  alto desktop: 2783px @1024   alto movil: 2729px @320
+==============================================================================
+  [picture   ]                    x=-412 y=-344 w=152 h=42 z=376  fixed=c
+      movil: x=-68 y=-233 w=152 h=42 hidden=None
+      img: Image-d5e108e7-0cc2-4f8c-b692-346d7ee5a360.svg
+      crop x=0 y=0 w=1012 h=140 orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [background]                    x=None y=None w=None h=None z=None
+      movil: x=None y=None w=None h=None hidden=None
+  [picture   ]                    x=None y=None w=None h=None z=302  HIDDEN
+      movil: x=164 y=2749 w=69 h=60 hidden=None
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=234x203 scale=None
+      clickLink -> 69efd65508d2323e999ec71d target=_self
+  [picture   ]                    x=None y=None w=None h=None z=375  HIDDEN
+      movil: x=-68 y=-233 w=152 h=42 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [picture   ]                    x=None y=None w=None h=None z=364  HIDDEN
+      movil: x=10 y=2550 w=130 h=106 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=NonexNone scale=None
+      clickLink -> 6a34617f6279119a208d4085 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [picture   ]                    x=None y=None w=None h=None z=365  HIDDEN
+      movil: x=152 y=2550 w=137 h=100 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=NonexNone scale=None
+      clickLink -> 6a346165b69ae66625484c81 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [picture   ]                    x=None y=None w=None h=None z=366  HIDDEN
+      movil: x=20 y=113 w=281 h=56 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=NonexNone scale=None
+  [picture   ]                    x=None y=None w=None h=None z=367  HIDDEN
+      movil: x=115 y=178 w=185 h=49 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=NonexNone scale=None
+  [text      ]                    x=None y=None w=None h=None z=368  HIDDEN
+      movil: x=17 y=175 w=130 h=59 hidden=False
+      · [None] 'for'
+  [text      ]                    x=385 y=124 w=132 h=62 z=370
+      movil: x=None y=None w=None h=None hidden=True
+      · [None] 'for'
+  [picture   ]                    x=48 y=128 w=321 h=64 z=369
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-7c3d27a9-ea10-48f2-9eac-82ea1091b6ff.png
+      crop x=0 y=0 w=551 h=110 orig=551x110 scale=0.5818181818181818
+  [picture   ]                    x=497 y=139 w=155 h=41 z=371
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-a88a47ed-0b2a-4930-8cbb-fbe6c73d9bdf.png
+      crop x=0 y=0 w=753 h=199 orig=753x199 scale=0.20603015075376885
+  [shape     ]                    x=48 y=242 w=330 h=24 z=346
+      movil: x=20 y=262 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [text      ]                    x=48 y=256 w=214 h=96 z=343
+      movil: x=20 y=274 w=182 h=81 hidden=None
+      · [P1 DM] 'Project'
+      · [P1 DM] 'Date'
+      · [P1 DM] 'Supervision'
+  [text      ]                    x=172 y=256 w=147 h=96 z=348
+      movil: x=125 y=274 w=125 h=81 hidden=None
+      · [P1 DM] 'Wall-mounted clock'
+      · [P1 DM] '2026'
+      · [P1 DM] 'Istituto Marangoni'
+  [shape     ]                    x=48 y=274 w=330 h=24 z=344
+      movil: x=20 y=289 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=308 w=330 h=24 z=345
+      movil: x=20 y=318 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=339 w=330 h=24 z=347
+      movil: x=20 y=345 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [text      ]                    x=48 y=416 w=330 h=168 z=349
+      movil: x=20 y=385 w=280 h=216 hidden=None
+      · [P1 DM] 'Based on the reimagination of the future of the domestic environment through product design and innovative technologies, the Domestic Oracle emerged. Looking into the past to reshape the future, I worked with time as a key factor in today’s source of stress, leading to toxic productivity.'
+  [picture   ]                    x=500 y=416 w=524 h=339 z=350
+      movil: x=20 y=621 w=280 h=181 hidden=None
+      img: image-209bf7af-9b68-43b7-b0ae-c9ae57d56a45.jpg
+      crop x=0 y=53 w=1754 h=1135 orig=1754x1240 scale=0.29875
+  [picture   ]                    x=500 y=416 w=524 h=352 z=351
+      movil: x=20 y=822 w=280 h=188 hidden=None
+      img: image-601574e7-b544-43a9-aa01-28d4c40c6cbe.jpg
+      crop x=0 y=30.87022900763361 w=1754 h=1178.2595419847328 orig=1754x1240 scale=0.29874572405929306
+  [picture   ]                    x=500 y=800 w=524 h=352 z=352
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-cfc2eaae-70e3-4011-a654-6aa8b19002c2.jpg
+      crop x=166.54545454545462 y=0 w=1714.9090909090908 h=1152 orig=2048x1152 scale=0.3055555555555556
+  [text      ]                    x=48 y=800 w=336 h=168 z=356
+      movil: x=20 y=1030 w=280 h=216 hidden=None
+      · [P1 DM] 'The clock shows real time in a diffused, implicit manner through color gradients reflecting the sky’s natural course. Upon proximity with the user, changes colors in reaction to the user’s feelings and expressions, thus creating a non-verbal introspective moment amidst busy lifestyles.'
+  [picture   ]                    x=500 y=1184 w=238 h=352 z=353
+      movil: x=20 y=1612 w=280 h=352 hidden=None
+      img: image-a45fc462-2314-405e-89fe-53b759d0c788.jpg
+      crop x=349 y=22 w=580 h=858 orig=1278x903 scale=0.41002
+  [picture   ]                    x=762 y=1184 w=262 h=352 z=355
+      movil: x=20 y=1984 w=280 h=352 hidden=None
+      img: image-84392394-9014-49ab-b9a5-d09b70c04ac1.jpg
+      crop x=635 y=53 w=779 h=1046 orig=2048x1152 scale=0.33637
+  [text      ]                    x=48 y=1184 w=330 h=24 z=362
+      movil: x=20 y=1474 w=280 h=20 hidden=None
+      · [P1 DM] 'Materials'
+  [text      ]                    x=48 y=1216 w=215 h=96 z=357
+      movil: x=20 y=1501 w=182 h=81 hidden=None
+      · [P1 DM] 'Dome'
+      · [P1 DM] 'Dome plate'
+      · [P1 DM] 'Frame'
+  [text      ]                    x=172 y=1216 w=201 h=96 z=361
+      movil: x=125 y=1501 w=171 h=81 hidden=None
+      · [P1 DM] 'Blown glass opal diffuser'
+      · [P1 DM] 'Hammered stainless steel'
+      · [P1 DM] 'Brushed stainless steel'
+  [shape     ]                    x=48 y=1234 w=330 h=24 z=358
+      movil: x=20 y=1516 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=1268 w=330 h=24 z=359
+      movil: x=20 y=1545 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=1299 w=330 h=24 z=360
+      movil: x=20 y=1572 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [picture   ]                    x=500 y=1568 w=524 h=352 z=354
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-a31ca914-8e6c-47ab-a7f6-10abcb43645b.jpg
+      crop x=0 y=22.515267175572546 w=1304 h=875.9694656488549 orig=1304x921 scale=0.401840490797546
+  [text      ]                    x=48 y=1872 w=346 h=48 z=363
+      movil: x=20 y=2356 w=280 h=72 hidden=None
+      · [P1 DM] 'Materiality and function merge to encompass the concept of embracing presence.'
+  [text      ]                    x=48 y=2125 w=704 h=122 z=306
+      movil: x=21 y=2484 w=279 h=46 hidden=None
+      · [None] '\u200d'
+      · [None] 'Discover Next '
+  [picture   ]                    x=286 y=2251 w=468 h=208 z=301
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-4cc203c9-7977-4633-b01c-9641990e3901.png
+      crop x=94 y=190 w=1441 h=640 orig=1536x1024 scale=0.32477
+      clickLink -> 6a346165b69ae66625484c81 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [picture   ]                    x=48 y=2273 w=214 h=192 z=303
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-540a7fc8-0c38-434e-90e3-8c18623512b3.png
+      crop x=744 y=334 w=2020 h=1813 orig=3508x2480 scale=0.10593
+      clickLink -> 6a34617f6279119a208d4085 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+
+==============================================================================
+PAGINA: adagio  (num 5, titulo 'project2')
+  alto desktop: 3174px @1024   alto movil: 3003px @320
+==============================================================================
+  [picture   ]                    x=-412 y=-344 w=152 h=42 z=367  fixed=c
+      movil: x=-68 y=-233 w=152 h=42 hidden=None
+      img: Image-d5e108e7-0cc2-4f8c-b692-346d7ee5a360.svg
+      crop x=0 y=0 w=1012 h=140 orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [background]                    x=None y=None w=None h=None z=None
+      movil: x=None y=None w=None h=None hidden=None
+  [picture   ]                    x=None y=None w=None h=None z=366  HIDDEN
+      movil: x=-68 y=-233 w=152 h=42 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [picture   ] Project1           x=None y=None w=None h=None z=362  HIDDEN
+      movil: x=180 y=2816 w=69 h=96 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=2048x1152 scale=None
+      radius: 200
+      clickLink -> 69efd65508d2323e999ec719 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [text      ] Heading            x=48 y=135 w=299 h=89 z=301
+      movil: x=20 y=111 w=280 h=131 hidden=None
+      · [None] 'adagio for'
+  [picture   ]                    x=325 y=144 w=253 h=55 z=358
+      movil: x=20 y=176 w=280 h=63 hidden=None
+      img: image-d0658822-3626-477a-a679-605c1d1b065f.png
+      crop x=0 y=4 w=960 h=209 orig=960x217 scale=0.26354
+  [shape     ]                    x=48 y=242 w=350 h=24 z=340
+      movil: x=20 y=272 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [text      ]                    x=48 y=256 w=214 h=96 z=337
+      movil: x=20 y=284 w=182 h=81 hidden=None
+      · [P1 DM] 'Project'
+      · [P1 DM] 'Date'
+      · [P1 DM] 'Supervision'
+  [text      ]                    x=172 y=256 w=211 h=96 z=342
+      movil: x=125 y=284 w=175 h=81 hidden=None
+      · [P1 DM] 'Outdoor furniture collection'
+      · [P1 DM] '2026'
+      · [P1 DM] 'Istituto Marangoni'
+  [shape     ]                    x=48 y=274 w=350 h=24 z=338
+      movil: x=20 y=299 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=308 w=350 h=24 z=339
+      movil: x=20 y=328 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=339 w=350 h=24 z=341
+      movil: x=20 y=355 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [text      ]                    x=48 y=416 w=330 h=264 z=343
+      movil: x=20 y=416 w=280 h=312 hidden=None
+      · [P1 DM] 'Adagio is an outdoor seating collection conceived for Cappellini, developed under the art direction of Piero Lissoni. It borrows its tempo from music — slow, deliberate, expansive. Tubular aluminium frames trace uninterrupted arcs. Perforated sheet panels hold light without weight. Polypropylene textiles anchor each element in warmth. Together, the armchair, sofa, and chaise longue compose a space where the invitation is simple: stay longer.'
+  [picture   ]                    x=500 y=416 w=524 h=339 z=344
+      movil: x=20 y=784 w=280 h=181 hidden=None
+      img: image-e1884bc8-0a7c-4d4a-9733-e971aa7bb8ec.jpg
+      crop x=188.88495575221236 y=0 w=2374.2300884955753 h=1536 orig=2752x1536 scale=0.220703125
+  [picture   ]                    x=500 y=416 w=524 h=352 z=345
+      movil: x=20 y=985 w=280 h=188 hidden=None
+      img: image-9d1ee2af-f1fc-4f6b-95ad-3e7a0f0730f2.jpg
+      crop x=0 y=89.89312977099235 w=2400 h=1612.2137404580153 orig=2400x1792 scale=0.21833333333333332
+  [picture   ]                    x=500 y=800 w=524 h=352 z=346
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-31d3fe1f-d04f-46eb-bdd6-baa6a11802fd.jpg
+      crop x=232.72727272727275 y=0 w=2286.5454545454545 h=1536 orig=2752x1536 scale=0.22916666666666666
+  [text      ]                    x=48 y=800 w=336 h=168 z=349
+      movil: x=20 y=1193 w=280 h=192 hidden=None
+      · [P1 DM] 'The collection is built on a 22mm tubular aluminium frame, powder-coated in a unifying terracotta. Backrest panels are formed in perforated aluminium sheet. '
+      · [P1 DM] 'Seats and cushions are upholstered in polypropylene textile, for high performance and low maintenance.'
+  [picture   ]                    x=500 y=1184 w=524 h=352 z=347
+      movil: x=20 y=1612 w=280 h=352 hidden=None
+      img: image-7e1bb4ba-cb15-4d40-8f1f-6a90ec76a7cd.jpg
+      crop x=233 y=0 w=2287 h=1536 orig=2752x1536 scale=0.22916666666666666
+  [text      ]                    x=48 y=1184 w=330 h=24 z=355
+      movil: x=20 y=1474 w=280 h=20 hidden=None
+      · [P1 DM] 'Materials'
+  [text      ]                    x=48 y=1216 w=215 h=96 z=350
+      movil: x=20 y=1501 w=182 h=81 hidden=None
+      · [P1 DM] 'Backrest'
+      · [P1 DM] 'Structure'
+      · [P1 DM] 'Finish'
+  [text      ]                    x=172 y=1216 w=201 h=96 z=354
+      movil: x=125 y=1501 w=171 h=81 hidden=None
+      · [P1 DM] 'Perforated aluminium sheet'
+      · [P1 DM] '22MM tubular aluminium'
+      · [P1 DM] 'Powder-coated'
+  [shape     ]                    x=48 y=1234 w=330 h=24 z=351
+      movil: x=20 y=1516 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=1268 w=330 h=24 z=352
+      movil: x=20 y=1545 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=1299 w=330 h=24 z=353
+      movil: x=20 y=1572 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [picture   ]                    x=500 y=1568 w=524 h=352 z=357
+      movil: x=20 y=1996 w=280 h=352 hidden=None
+      img: image-5c780534-6d6a-4b58-9c1b-54e9f1b44eac.jpg
+      crop x=0 y=89.89312977099235 w=2400 h=1612.2137404580153 orig=2400x1792 scale=0.21833333333333332
+  [picture   ]                    x=500 y=1952 w=524 h=352 z=348
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-18c96d3f-eb22-401f-8904-464dd12f45a7.jpg
+      crop x=232.72727272727275 y=0 w=2286.5454545454545 h=1536 orig=2752x1536 scale=0.22916666666666666
+  [text      ]                    x=48 y=2088 w=346 h=216 z=356
+      movil: x=20 y=2444 w=280 h=264 hidden=None
+      · [P1 DM] 'Adagio takes its name and spirit from the musical direction:'
+      · [P1 DM] '\nA tempo that asks for slowness and full presence. Applied to outdoor furniture, this becomes a structural principle: forms that do not hurry, lines that extend beyond the strictly necessary, silhouettes that carry the eye outward before returning it to rest.'
+  [text      ]                    x=48 y=2506 w=704 h=122 z=360
+      movil: x=21 y=2753 w=279 h=46 hidden=None
+      · [None] '\u200d'
+      · [None] 'Discover Next '
+  [picture   ]                    x=48 y=2632 w=468 h=208 z=359
+      movil: x=21 y=2812 w=137 h=100 hidden=None
+      img: image-4cc203c9-7977-4633-b01c-9641990e3901.png
+      crop x=94 y=190 w=1441 h=640 orig=1536x1024 scale=0.32477
+      clickLink -> 6a346165b69ae66625484c81 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [picture   ] Project1           x=571 y=2677 w=130 h=181 z=361
+      movil: x=None y=None w=None h=None hidden=True
+      img: image-67b3982a-436b-4f35-834b-ff61984341db.jpg
+      crop x=654 y=103 w=692 h=963 orig=2048x1152 scale=0.18786
+      radius: 200
+      clickLink -> 69efd65508d2323e999ec719 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+
+==============================================================================
+PAGINA: opus  (num 6, titulo 'project3')
+  alto desktop: 3171px @1024   alto movil: 2875px @320
+==============================================================================
+  [picture   ]                    x=-412 y=-344 w=152 h=42 z=367  fixed=c
+      movil: x=-68 y=-233 w=152 h=42 hidden=None
+      img: Image-d5e108e7-0cc2-4f8c-b692-346d7ee5a360.svg
+      crop x=0 y=0 w=1012 h=140 orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [background]                    x=None y=None w=None h=None z=None
+      movil: x=None y=None w=None h=None hidden=None
+  [picture   ]                    x=None y=None w=None h=None z=366  HIDDEN
+      movil: x=-68 y=-233 w=152 h=42 hidden=False
+      img: (SVG inline)
+      crop x=None y=None w=None h=None orig=1012x140 scale=0.4743083003952569
+      clickLink -> 69efd65508d2323e999ec71f target=_self
+  [text      ] Heading            x=48 y=131 w=731 h=61 z=301
+      movil: x=19 y=120 w=280 h=122 hidden=None
+      · [None] 'opus for '
+  [picture   ]                    x=291 y=138 w=158 h=46 z=362
+      movil: x=22 y=199 w=280 h=80 hidden=None
+      img: image-43e140db-507e-43d4-b4bb-fce9ebd017e4.png
+      crop x=0 y=0 w=7588 h=2212 orig=7588x2212 scale=0.020795660036166366
+  [shape     ]                    x=48 y=242 w=330 h=24 z=340
+      movil: x=20 y=325 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [text      ]                    x=48 y=256 w=214 h=128 z=337
+      movil: x=20 y=337 w=182 h=113 hidden=None
+      · [P1 DM] 'Project'
+      · [P1 DM] 'Date'
+      · [P1 DM] 'Team'
+      · [P1 DM] 'Type'
+  [text      ]                    x=172 y=256 w=199 h=128 z=342
+      movil: x=125 y=337 w=175 h=113 hidden=None
+      · [P1 DM] 'Capsule collection'
+      · [P1 DM] '2026'
+      · [P1 DM] 'Acosta, Mora & Contreras'
+      · [P1 DM] 'Fendi Design Prize 2026'
+  [shape     ]                    x=48 y=274 w=330 h=24 z=338
+      movil: x=20 y=352 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=308 w=330 h=24 z=339
+      movil: x=20 y=381 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=339 w=330 h=24 z=341
+      movil: x=20 y=408 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=371 w=330 h=24 z=351
+      movil: x=20 y=435 w=280 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [text      ]                    x=48 y=448 w=342 h=216 z=343
+      movil: x=20 y=546 w=280 h=288 hidden=None
+      · [P1 DM] 'The project draws inspiration from the formal language of Roman mosaics, focusing on the compositional principles that define their enduring visual power.'
+      · [P1 DM] ''
+      · [P1 DM] 'Central to this is the idea of fragmentation, where individual tesserae form a cohesive whole, establishing a rhythm through repetition, variation, and subtle imperfection.'
+  [picture   ]                    x=500 y=448 w=524 h=339 z=344
+      movil: x=20 y=849 w=280 h=181 hidden=None
+      img: image-866547be-83a4-44fa-8f1e-2c67784c0765.png
+      crop x=0 y=44.257633587786245 w=1446 h=935.4847328244275 orig=1446x1024 scale=0.3623789764868603
+  [picture   ]                    x=500 y=448 w=524 h=352 z=345
+      movil: x=20 y=1050 w=280 h=188 hidden=None
+      img: image-e72b15b3-132c-4e73-8401-502fe42395f1.png
+      crop x=5.81818181818187 y=0 w=1524.3636363636363 h=1024 orig=1536x1024 scale=0.34375
+  [picture   ]                    x=500 y=832 w=524 h=352 z=346
+      movil: x=20 y=1166 w=1 h=188 hidden=True
+      img: image-c293cf0c-a2af-4d12-9eb5-cf0d08db3a8b.png
+      crop x=0 y=26.320610687022906 w=1446 h=971.3587786259542 orig=1446x1024 scale=0.3623789764868603
+  [picture   ]                    x=500 y=1216 w=238 h=352 z=347
+      movil: x=20 y=1605 w=280 h=352 hidden=None
+      img: image-31135bd6-cfaf-4c6f-a0b6-2d1f36381326.png
+      crop x=363 y=0 w=692 h=1024 orig=1536x1024 scale=0.34393
+  [picture   ]                    x=762 y=1216 w=262 h=352 z=349
+      movil: x=20 y=2223 w=280 h=352 hidden=None
+      img: image-5a0cd962-9ca4-444c-8385-80a19a0e201a.png
+      crop x=386.90909090909093 y=0 w=762.1818181818181 h=1024 orig=1536x1024 scale=0.34375
+  [text      ]                    x=48 y=1216 w=330 h=24 z=357
+      movil: x=20 y=2017 w=280 h=20 hidden=None
+      · [P1 DM] 'Materials'
+  [text      ]                    x=48 y=1248 w=201 h=128 z=356
+      movil: x=20 y=2044 w=171 h=113 hidden=None
+      · [P1 DM] 'Solid walnut'
+      · [P1 DM] 'Sement blanc optique fabric'
+      · [P1 DM] 'Honed travertine'
+      · [P1 DM] 'Taupe soft leather'
+  [shape     ]                    x=48 y=1266 w=238 h=24 z=353
+      movil: x=20 y=2059 w=222 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=1300 w=238 h=24 z=354
+      movil: x=20 y=2088 w=222 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=1331 w=238 h=24 z=355
+      movil: x=20 y=2115 w=222 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [shape     ]                    x=48 y=1364 w=238 h=24 z=358
+      movil: x=20 y=2148 w=222 h=20 hidden=None
+      shape tp=line bg=#000000 op=1 radius=0
+  [picture   ]                    x=500 y=1600 w=524 h=195 z=348
+      movil: x=20 y=2256 w=1 h=188 hidden=True
+      img: image-feec6a10-413f-4df4-abdf-862395eca0fe.png
+      crop x=6 y=343 w=1524 h=567 orig=1536x1024 scale=0.34392
+  [picture   ]                    x=500 y=1824 w=524 h=352 z=352
+      movil: x=20 y=2608 w=1 h=188 hidden=True
+      img: image-676fee8d-7bf8-4aa5-9ace-9402d50fa91a.png
+      crop x=5.81818181818187 y=0 w=1524.3636363636363 h=1024 orig=1536x1024 scale=0.34375
+  [text      ]                    x=48 y=1984 w=336 h=192 z=350
+      movil: x=20 y=1258 w=280 h=240 hidden=None
+      · [P1 DM] 'Like in ancient mosaics, each piece is both autonomous and essential. Removed from its context, it is incomplete; assembled, it becomes coherent. '
+      · [P1 DM] ''
+      · [P1 DM] 'Pieces emerge, break, and reconfigure, echoing the logic of fragmentation while embracing the imperfections of time.'
+  [text      ]                    x=48 y=2515 w=704 h=122 z=360
+      movil: x=21 y=2633 w=279 h=46 hidden=None
+      · [None] '\u200d'
+      · [None] 'Discover Next '
+  [picture   ]                    x=286 y=2662 w=214 h=208 z=359
+      movil: x=21 y=2694 w=130 h=106 hidden=None
+      img: image-540a7fc8-0c38-434e-90e3-8c18623512b3.png
+      crop x=822 y=334 w=1865 h=1812 orig=3508x2480 scale=0.11476
+      clickLink -> 6a34617f6279119a208d4085 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]
+  [picture   ] Project1           x=87 y=2689 w=130 h=181 z=361
+      movil: x=170 y=2704 w=69 h=96 hidden=False
+      img: image-67b3982a-436b-4f35-834b-ff61984341db.jpg
+      crop x=654 y=103 w=692 h=963 orig=2048x1152 scale=0.18786
+      radius: 200
+      clickLink -> 69efd65508d2323e999ec719 target=_self
+      ANIM[hover] [{"duration": 0.1, "acceleration": "ease-both", "from_opacity": 100, "use_opacity": true, "opacity": 80}]

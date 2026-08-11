@@ -1,0 +1,1129 @@
+{
+ "publicPath": "https://st-p.rmcdn1.net/36330bcf/dist",
+ "project": {
+  "isProjectEmailPrivate": {
+   "isEnabled": false,
+   "allowedEmails": [],
+   "allowedDomains": []
+  },
+  "opts": {
+   "arrows": false,
+   "menubutton": false,
+   "sharebutton": false,
+   "pagecounter": false,
+   "controlsontop": false,
+   "branding": false,
+   "endpage": false,
+   "endpagetype": "join",
+   "viewertype": "horizontal",
+   "slidein": false,
+   "scalewidth": 3600,
+   "projectinfo": false,
+   "hidden": true,
+   "allowindex": false,
+   "scalableviewer": false,
+   "lqip": true,
+   "phoneVerticalAlign": "top",
+   "useCustomCursor": false,
+   "viewerNext": false
+  },
+  "textStyles": {
+   "global": [],
+   "project": [
+    {
+     "name": "style-4763fd06-a45e-4daa-88ed-3816b6b50876",
+     "label": "H2 DM",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "fvhm",
+      "fontWeight": "400",
+      "fontSize": 62,
+      "lineHeight": 61,
+      "letterSpacing": -3.3,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6a00b66a7562ca0d68685097"
+    },
+    {
+     "name": "style-e4accaa3-5c43-4252-a791-b1da68cde57b",
+     "label": "H1 Desk B",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "DM Sans",
+      "fontWeight": 400,
+      "fontSize": 48,
+      "lineHeight": 61,
+      "letterSpacing": -3.3,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left",
+      "fontVariationSettings": "'wght' 252"
+     },
+     "_id": "69769b10eb8e2bb549991367"
+    },
+    {
+     "name": "style-544c1af6-1e7f-4bb4-9ed8-a8cf9d763f79",
+     "label": "H2 Desk",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "hngy",
+      "fontWeight": 400,
+      "fontSize": 46,
+      "lineHeight": 43,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69769b59bd905d67181ce1b5"
+    },
+    {
+     "name": "style-c3efc49b-4afb-4de0-8b36-fc6cabe37d71",
+     "label": "H2 Desk (Copy)",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "fvhm",
+      "fontWeight": 300,
+      "fontSize": 40,
+      "lineHeight": 40,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69769b59bd905d67181ce1b5"
+    },
+    {
+     "name": "style-96224cad-d448-4dfc-b186-f1ba2f6edbe1",
+     "label": "Big Link Desk",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "600",
+      "fontSize": 29,
+      "lineHeight": 32,
+      "letterSpacing": -1.4,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69769b784b03159628579749"
+    },
+    {
+     "name": "style-6a14fae1-8d88-4d4b-b2dc-b2e217215055",
+     "label": "P2 Desk",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "wtqc",
+      "fontWeight": "700",
+      "fontSize": 14,
+      "lineHeight": 17,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "uppercase",
+      "textAlign": "left"
+     },
+     "_id": "69769b8ba16a7ea3ab29ccce"
+    },
+    {
+     "name": "style-28b8771f-3c30-4d01-b09f-704fc60a4a1a",
+     "label": "P4 Desk",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "kmkm",
+      "fontWeight": 400,
+      "fontSize": 12,
+      "lineHeight": 12,
+      "letterSpacing": -0.4,
+      "fontStyle": "normal",
+      "color": "23232364",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69769bbfb1b95aa14d732e9f"
+    },
+    {
+     "name": "style-e892971d-9127-4680-be4f-d0285f55adac",
+     "label": "P4 Desk B",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "700",
+      "fontSize": 10,
+      "lineHeight": 12,
+      "letterSpacing": -0.4,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69769be5a16a7ea3ab29d9e4"
+    },
+    {
+     "name": "style-e19b3306-f41a-4027-a97e-e6cfc9ef3777",
+     "label": "H1 Mob W",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "600",
+      "fontSize": 43,
+      "lineHeight": 42,
+      "letterSpacing": -2.5,
+      "fontStyle": "normal",
+      "color": "FFFFFF64",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6976d61c6df5649745a32d6e"
+    },
+    {
+     "name": "style-b3f3a840-d7c2-4f02-8b67-b542763d5d59",
+     "label": "H1 Mob B",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "600",
+      "fontSize": 43,
+      "lineHeight": 42,
+      "letterSpacing": -2.5,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6976d61c6df5649745a32d6e"
+    },
+    {
+     "name": "style-0d213825-147d-4cae-b5ff-8b78df790d98",
+     "label": "H2 Mob",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "600",
+      "fontSize": 29,
+      "lineHeight": 32,
+      "letterSpacing": -1.4,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6976d6db359f61ac0ef197a8"
+    },
+    {
+     "name": "style-697fc947-a5b1-461a-8ec4-05c769c85721",
+     "label": "P1 Mob",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "600",
+      "fontSize": 21,
+      "lineHeight": 25,
+      "letterSpacing": -1.3,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6976d6f64b0315962868f9bc"
+    },
+    {
+     "name": "style-6e742a63-b997-429e-b9cb-517cc1c3bf36",
+     "label": "P2 Mob All caps (Copy)",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "wtqc",
+      "fontWeight": "700",
+      "fontSize": 14,
+      "lineHeight": 17,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "uppercase",
+      "textAlign": "left"
+     },
+     "_id": "6976d712271d1ebad896c364"
+    },
+    {
+     "name": "style-e678f748-4154-4139-b562-7e36f820a226",
+     "label": "P2 Mob All caps White",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "wtqc",
+      "fontWeight": "700",
+      "fontSize": 14,
+      "lineHeight": 17,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "FFFFFF64",
+      "textTransform": "uppercase",
+      "textAlign": "left"
+     },
+     "_id": "6976d712271d1ebad896c364"
+    },
+    {
+     "name": "style-25b657b7-361a-4baf-9a86-721fdce14ecd",
+     "label": "P3 Mob",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "700",
+      "fontSize": 10,
+      "lineHeight": 14,
+      "letterSpacing": -0.4,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6976d729467c1aa8592167dc"
+    },
+    {
+     "name": "style-51cb0106-3116-40c4-801d-1b80b4047e24",
+     "label": "P3 Mob W",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "700",
+      "fontSize": 10,
+      "lineHeight": 14,
+      "letterSpacing": -0.4,
+      "fontStyle": "normal",
+      "color": "FFFFFF64",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6976d729467c1aa8592167dc"
+    },
+    {
+     "name": "style-7b308265-4a4d-4a72-8a2a-0ac438829c4a",
+     "label": "Big Link Mob",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "rqtk",
+      "fontWeight": 300,
+      "fontSize": 24,
+      "lineHeight": 24,
+      "letterSpacing": -1.4,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6976d91e051a48662cef26fc"
+    },
+    {
+     "name": "style-106013d8-f144-4527-8b2b-02a28ab43d8d",
+     "label": "New style",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "Bodoni Moda",
+      "fontWeight": "700",
+      "fontSize": 20,
+      "lineHeight": 22,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "ffffff64",
+      "textTransform": "capitalize",
+      "textAlign": "left"
+     },
+     "_id": "69efd9395fbc0b7e3a9cc438"
+    },
+    {
+     "name": "style-fd4117df-4b25-4ffe-8152-493b2200b17a",
+     "label": "Bodoni small title",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "Bodoni Moda",
+      "fontWeight": 400,
+      "fontSize": 14,
+      "lineHeight": 22,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "ffffff64",
+      "textTransform": "capitalize",
+      "textAlign": "right"
+     },
+     "_id": "69efd9afaae0f28bf055e55d"
+    },
+    {
+     "name": "style-0b6ea342-54e6-4979-921a-5ece4ea06a3a",
+     "label": "New style",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "fvhm",
+      "fontWeight": 700,
+      "fontSize": 18,
+      "lineHeight": 17,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "uppercase",
+      "textAlign": "left",
+      "fontVariationSettings": "'wght' 644"
+     },
+     "_id": "69efdc5fb0f1cb8563c7b963"
+    },
+    {
+     "name": "style-0cb00c09-c05d-4720-b33e-54268e41daad",
+     "label": "New style",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "hngy",
+      "fontWeight": 400,
+      "fontSize": 24,
+      "lineHeight": 22,
+      "letterSpacing": 0,
+      "fontStyle": "italic",
+      "color": "00000064",
+      "textAlign": "left"
+     },
+     "_id": "69efdd5fc9d4bd5437de1e79"
+    },
+    {
+     "name": "style-a9fc106b-4439-4c12-9d15-e14aec753451",
+     "label": "P1 DM",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "kmkm",
+      "fontWeight": 400,
+      "fontSize": 18,
+      "lineHeight": 18,
+      "letterSpacing": -1,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69efdd95b0f1cb8563c873b0"
+    },
+    {
+     "name": "style-8d93abfc-071a-4fef-ba33-7b07df462951",
+     "label": "New style",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "hngy",
+      "fontWeight": 400,
+      "fontSize": 14,
+      "lineHeight": 17,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textAlign": "left"
+     },
+     "_id": "6a00abd65b43fc780656a080"
+    },
+    {
+     "name": "style-cf1948a0-33ad-49fa-96a3-5e3ce0af3802",
+     "label": "P4 Benton",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "hngy",
+      "fontWeight": "400",
+      "fontSize": 24,
+      "lineHeight": 24,
+      "letterSpacing": 0,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textAlign": "left"
+     },
+     "_id": "6a00abd65b43fc780656a081"
+    },
+    {
+     "name": "style-c7fcc786-a5d5-44d3-b72e-f1e92f7f1f05",
+     "label": "New style",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "fvhm",
+      "fontWeight": 400,
+      "fontSize": 62,
+      "lineHeight": 61,
+      "letterSpacing": -3.3,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "6a00b66a7562ca0d68685096"
+    },
+    {
+     "name": "style-29262f43-929a-4228-a372-2d38bb37a974",
+     "label": "H1 Desk W",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "600",
+      "fontSize": 62,
+      "lineHeight": 61,
+      "letterSpacing": -3.3,
+      "fontStyle": "normal",
+      "color": "ffffff64",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69769b10eb8e2bb549991367"
+    },
+    {
+     "name": "style-fd188aeb-aaa1-4b84-be65-9233d8acf325",
+     "label": "P1 Desk",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "600",
+      "fontSize": 29,
+      "lineHeight": 32,
+      "letterSpacing": -1.4,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "left"
+     },
+     "_id": "69769b6429a150c1a359754c"
+    },
+    {
+     "name": "style-7589ea1c-0cec-48bb-ab58-c22c079f829b",
+     "label": "P3 Desk All caps",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "tscy",
+      "fontWeight": "700",
+      "fontSize": 10,
+      "lineHeight": 12,
+      "letterSpacing": -0.4,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "none",
+      "textAlign": "center"
+     },
+     "_id": "69769bac5baf2d04d6869fa4"
+    },
+    {
+     "name": "style-7927fb79-e452-4672-b2bf-e691e697569a",
+     "label": "New",
+     "tag": "p",
+     "cssProperties": {
+      "fontFamily": "Austin",
+      "fontWeight": "400",
+      "fontSize": 47,
+      "lineHeight": 55,
+      "letterSpacing": 0.6,
+      "fontStyle": "normal",
+      "color": "00000064",
+      "textTransform": "uppercase",
+      "textAlign": "center"
+     },
+     "_id": "66a78565ecfc8b005b765d4c"
+    }
+   ]
+  },
+  "listStyles": {
+   "global": [],
+   "project": []
+  },
+  "linkStyles": {
+   "global": [],
+   "project": [
+    {
+     "style": {
+      "link": {
+       "textColor": "00000064",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      },
+      "hover": {
+       "textColor": "0000003c",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      },
+      "current": {
+       "textColor": "00000064",
+       "type": "Solid",
+       "color": "C7C7C764",
+       "size": 4,
+       "padding": -9
+      }
+     },
+     "name": "link-style-94d9d3e9-ce07-4a31-9bd2-3100c91a4481",
+     "label": "Links Contacts",
+     "_id": "65e90c7a37d1470036a5f026"
+    },
+    {
+     "style": {
+      "link": {
+       "textColor": "FFFFFF64",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      },
+      "hover": {
+       "textColor": "FFFFFF64",
+       "type": "None",
+       "color": "FFFFFF64",
+       "size": 4,
+       "padding": -10
+      },
+      "current": {
+       "textColor": "FFFFFF64",
+       "type": "Solid",
+       "color": "FFFFFF14",
+       "size": 4,
+       "padding": -10
+      }
+     },
+     "name": "link-style-37d7e20a-6080-4606-bb95-f256bd5bfbb2",
+     "label": "Menu_Light_Mob",
+     "_id": "65e90c7a37d1470036a5f026"
+    },
+    {
+     "style": {
+      "link": {
+       "textColor": "00000064",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      },
+      "hover": {
+       "textColor": "00000064",
+       "type": "Solid",
+       "color": "00000064",
+       "size": 4,
+       "padding": -10
+      },
+      "current": {
+       "textColor": "00000064",
+       "type": "Solid",
+       "color": "00000014",
+       "size": 4,
+       "padding": -10
+      }
+     },
+     "name": "link-style-6244697c-ff68-412d-ac0a-dc0d61795f90",
+     "label": "Menu_Dark_Mob",
+     "_id": "65e90c7a37d1470036a5f026"
+    },
+    {
+     "style": {
+      "link": {
+       "textColor": "00000064",
+       "type": "None",
+       "color": "00000064",
+       "size": 4,
+       "padding": -10
+      },
+      "hover": {
+       "textColor": "00000064",
+       "type": "Solid",
+       "color": "00000064",
+       "size": 4,
+       "padding": -10
+      },
+      "current": {
+       "textColor": "00000064",
+       "type": "Solid",
+       "color": "00000014",
+       "size": 4,
+       "padding": -10
+      }
+     },
+     "name": "link-style-c2547298-afd4-4415-9bf3-0473045dfbbc",
+     "label": "Menu_Dark_Desk",
+     "_id": "65e90c7a37d1470036a5f026"
+    },
+    {
+     "style": {
+      "link": {
+       "textColor": "FFFFFF64",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      },
+      "hover": {
+       "textColor": "FFFFFF64",
+       "type": "Solid",
+       "color": "FFFFFF64",
+       "size": 4,
+       "padding": -10
+      },
+      "current": {
+       "textColor": "FFFFFF64",
+       "type": "Solid",
+       "color": "FFFFFF14",
+       "size": 4,
+       "padding": -10
+      }
+     },
+     "name": "link-style-eb48d0d1-229b-45b9-8bfa-45c29a27b6b0",
+     "label": "Menu_Light_Desk",
+     "_id": "65e90c7a37d1470036a5f026"
+    },
+    {
+     "style": {
+      "link": {
+       "textColor": "00000064",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      },
+      "hover": {
+       "textColor": "00000032",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      },
+      "current": {
+       "textColor": "00000064",
+       "type": "None",
+       "color": "00000064",
+       "size": 1,
+       "padding": 0
+      }
+     },
+     "name": "link-style-300c46da-3aea-4561-94a3-5646ef2b535f",
+     "label": "New Style",
+     "_id": "64edf4a23a252400251a3fff"
+    }
+   ]
+  },
+  "viewport_phone_portrait": {
+   "opts": {
+    "lqip": true
+   }
+  },
+  "_id": "6a32d6ce127591667ab93f10",
+  "num_id": 6302960,
+  "__v": 0,
+  "allow_iframe_embed": false,
+  "categories": [],
+  "changed": false,
+  "copyStatus": "finished",
+  "coverPid": "69efd65508d2323e999ec71f",
+  "creation_date": "2026-04-27T21:34:13.440Z",
+  "description": "Ciao, I'm Caroline. An object and spatial designer. I'm interested in how products and spaces can create memorable experiences without being loud about it.",
+  "desktopWidth": 1024,
+  "edit_params": {
+   "fonts": [
+    {
+     "provider": "system",
+     "css_name": "Arial",
+     "name": "Arial",
+     "variations": [
+      "n4",
+      "i4",
+      "n7",
+      "i7"
+     ],
+     "hidden": true
+    },
+    {
+     "provider": "system",
+     "css_name": "Courier New",
+     "name": "Courier New",
+     "variations": [
+      "n4",
+      "i4",
+      "n7",
+      "i7"
+     ],
+     "hidden": true
+    },
+    {
+     "provider": "system",
+     "css_name": "Georgia",
+     "name": "Georgia",
+     "variations": [
+      "n4",
+      "i4",
+      "n7",
+      "i7"
+     ],
+     "hidden": true
+    },
+    {
+     "provider": "system",
+     "css_name": "Times New Roman",
+     "name": "Times New Roman",
+     "variations": [
+      "n4",
+      "i4",
+      "n7",
+      "i7"
+     ],
+     "hidden": true
+    },
+    {
+     "provider": "system",
+     "css_name": "Trebuchet MS",
+     "name": "Trebuchet MS",
+     "variations": [
+      "n4",
+      "i4",
+      "n7",
+      "i7"
+     ],
+     "hidden": true
+    },
+    {
+     "provider": "system",
+     "css_name": "Verdana",
+     "name": "Verdana",
+     "variations": [
+      "n4",
+      "i4",
+      "n7",
+      "i7"
+     ],
+     "hidden": true
+    },
+    {
+     "provider": "system",
+     "css_name": "Tahoma",
+     "name": "Tahoma",
+     "variations": [
+      "n4",
+      "n7"
+     ],
+     "hidden": true
+    },
+    {
+     "provider": "typekit",
+     "css_name": "kmkm",
+     "name": "DM Sans",
+     "variations": [
+      "n4",
+      "n3",
+      "n6"
+     ]
+    },
+    {
+     "provider": "typekit",
+     "css_name": "fvhm",
+     "name": "DM Sans 36pt",
+     "variations": [
+      "n3",
+      "n4"
+     ],
+     "hidden": false
+    },
+    {
+     "provider": "typekit",
+     "css_name": "hngy",
+     "name": "Benton Modern Display Condensed",
+     "variations": [
+      "n4"
+     ]
+    },
+    {
+     "provider": "typekit",
+     "css_name": "jwst",
+     "name": "All Round Gothic",
+     "variations": [
+      "n5"
+     ]
+    }
+   ],
+   "paragraph_styles": [],
+   "link_styles": []
+  },
+  "first_published": "2026-05-10T17:09:40.055Z",
+  "hasSummary": true,
+  "hasTextWidgetsV3": true,
+  "hasWidgetsWithVerticalOnscrollAnimation": true,
+  "hasYoutube": false,
+  "isArchived": false,
+  "isPrivatePages": false,
+  "isPublishedAsTemplate": false,
+  "is_mag_use_minimal_viewport": true,
+  "is_mag_use_page_order": true,
+  "is_private": false,
+  "is_published": true,
+  "last_changed": "2026-07-30T18:08:20.649Z",
+  "last_published": "2026-06-17T17:18:05.770Z",
+  "last_unpublished": "2026-06-17T17:18:02.345Z",
+  "likers": [],
+  "master_share_pid": null,
+  "pages": [
+   {
+    "_id": "69efd65508d2323e999ec71f",
+    "mid": "69efd65508d2323e999ec713",
+    "num": 1,
+    "title": "main",
+    "type": "scroll",
+    "height": 2865,
+    "uri": "main",
+    "hidden": false,
+    "isPrivate": false,
+    "sectionscroll": false,
+    "used_autolayout": true,
+    "viewport_phone_portrait": {
+     "enabled": true,
+     "height": 1370,
+     "type": "scroll",
+     "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-1bdf24b6-862f-466f-97de-902b36e32c10.jpg"
+    },
+    "arrows_color": "white",
+    "num_id": 30056809,
+    "parentPage": null,
+    "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-e82c1817-a957-4ffb-a453-1e17c99aca6e_readyscr.jpg",
+    "children": [],
+    "pagePath": "main",
+    "pageNestedNum": "1",
+    "htmlUrl": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/HtmlSnippet-85fe431f-b9b4-4899-8fad-514642005a6c.html"
+   },
+   {
+    "_id": "69efd65508d2323e999ec71a",
+    "mid": "69efd65508d2323e999ec713",
+    "num": 2,
+    "title": "about",
+    "type": "scroll",
+    "height": 753,
+    "uri": "about",
+    "hidden": false,
+    "isPrivate": false,
+    "sectionscroll": false,
+    "used_autolayout": true,
+    "viewport_phone_portrait": {
+     "enabled": true,
+     "height": 1267,
+     "type": "scroll",
+     "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-c2096dd5-4192-4cf3-b0c0-a31a459fef1c.jpg"
+    },
+    "arrows_color": "white",
+    "num_id": 30056804,
+    "parentPage": null,
+    "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-7a54ed4d-6501-42ee-9058-0c63839497fb_readyscr.jpg",
+    "children": [],
+    "pagePath": "about",
+    "pageNestedNum": "2",
+    "htmlUrl": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/HtmlSnippet-4ae25915-c5d2-46b5-aeb1-18b5991fbf45.html"
+   },
+   {
+    "_id": "69efd65508d2323e999ec71b",
+    "mid": "69efd65508d2323e999ec713",
+    "num": 3,
+    "title": "contacts",
+    "type": "scroll",
+    "height": 745,
+    "uri": "contacts",
+    "hidden": false,
+    "isPrivate": false,
+    "sectionscroll": false,
+    "used_autolayout": true,
+    "viewport_phone_portrait": {
+     "enabled": true,
+     "height": 647,
+     "type": "scroll",
+     "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-583e7600-8259-4205-b370-644660e677e3.jpg"
+    },
+    "arrows_color": "white",
+    "num_id": 30056807,
+    "parentPage": null,
+    "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-e1185130-dbe9-410f-a6f8-608fa143fab1_readyscr.jpg",
+    "children": [],
+    "pagePath": "contacts",
+    "pageNestedNum": "3",
+    "htmlUrl": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/HtmlSnippet-fdda22bf-1f14-4c4d-9710-cfd1fed25baa.html"
+   },
+   {
+    "_id": "69efd65508d2323e999ec719",
+    "mid": "69efd65508d2323e999ec713",
+    "num": 4,
+    "title": "project1",
+    "type": "scroll",
+    "height": 2783,
+    "uri": "norologio",
+    "hidden": false,
+    "isPrivate": false,
+    "sectionscroll": false,
+    "used_autolayout": true,
+    "viewport_phone_portrait": {
+     "enabled": true,
+     "height": 2729,
+     "type": "scroll",
+     "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-62adb94f-e3f6-4bc1-9aff-df3560b11de3.jpg"
+    },
+    "arrows_color": "white",
+    "num_id": 30056803,
+    "parentPage": null,
+    "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-a3ea99c6-d603-4790-b736-00945d1b4427_readyscr.jpg",
+    "children": [],
+    "pagePath": "norologio",
+    "pageNestedNum": "4",
+    "htmlUrl": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/HtmlSnippet-24c5c8e6-9abb-4602-b21e-ddfdebc761ad.html"
+   },
+   {
+    "_id": "6a34617f6279119a208d4085",
+    "mid": "69efd65508d2323e999ec713",
+    "num": 5,
+    "title": "project2",
+    "type": "scroll",
+    "height": 3174,
+    "hidden": false,
+    "isPrivate": false,
+    "sectionscroll": false,
+    "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-c20b7dbd-439e-4eb6-93de-2b2c81ea9105_readyscr.jpg",
+    "used_autolayout": true,
+    "viewport_phone_portrait": {
+     "enabled": true,
+     "height": 3003,
+     "type": "scroll",
+     "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-8b40d581-91a5-4d0d-aec5-9f70c5c42224.jpg"
+    },
+    "arrows_color": "white",
+    "parentPage": null,
+    "num_id": 30648946,
+    "uri": "adagio",
+    "children": [],
+    "pagePath": "adagio",
+    "pageNestedNum": "5",
+    "htmlUrl": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/HtmlSnippet-9a6a7de9-f4b4-409a-bc06-23267f0f9cbc.html"
+   },
+   {
+    "_id": "6a346165b69ae66625484c81",
+    "mid": "69efd65508d2323e999ec713",
+    "num": 6,
+    "title": "project3",
+    "type": "scroll",
+    "height": 3171,
+    "hidden": false,
+    "isPrivate": false,
+    "sectionscroll": false,
+    "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-bc71bb4e-b5c7-43c1-b2eb-5ca91267786d_readyscr.jpg",
+    "used_autolayout": true,
+    "viewport_phone_portrait": {
+     "enabled": true,
+     "height": 2875,
+     "type": "scroll",
+     "screenshot": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-e893a30c-8f7d-4313-8a66-93bdb6542000.jpg"
+    },
+    "arrows_color": "white",
+    "parentPage": null,
+    "num_id": 30648944,
+    "uri": "opus",
+    "children": [],
+    "pagePath": "opus",
+    "pageNestedNum": "6",
+    "htmlUrl": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/HtmlSnippet-fd9d3347-f136-46d7-a643-33af86054ef0.html"
+   }
+  ],
+  "pages_count": 6,
+  "pass_last_changed": "2026-04-26T17:10:01.895Z",
+  "phoneWidth": 320,
+  "prevPubVersionId": "6a3585e468d1a394c8b37f6f",
+  "published": "2026-06-17T17:18:05.770Z",
+  "selected_for_featured": 0,
+  "setForRemoval": false,
+  "showAsNew": false,
+  "submitted_for_featured": 0,
+  "tags": [],
+  "template_num": 6146106,
+  "title": "Caroline Contreras",
+  "typekit_url": "https://use.typekit.net/ik/VupyfN3DnUXyEQrVW97N53gTNKg79MSmgkcWCKXV6Bqfenqgf4aebgJVwQMuFD9hFmvhwDMk5Qj3e6MKgeZh-eXKgey0ZaqKgYsDjaqKgell-hXKgY4UieCKgeTaSab7f6KkzbwbMg62JMI7f6K3zbwbMg6IJMI7f6RevMIbMs6IJMI7f6KD63wbMy6eJMI7fbRPdsMfeMS6MPGHfVkvMUM2eMb6MPGHfJeNMUM2eMw6MPGHfVrvMUM2eMj6MPGHfJ7NMUMIeMw6MPGHf47KMyMBeM96MZMg87-0X3j.js",
+  "updated": "2026-07-30T18:08:22.276Z",
+  "uri": "6302960",
+  "usedWidgetTypes": [
+   "background",
+   "text",
+   "picture",
+   "shape"
+  ],
+  "used_custom_fonts": [],
+  "used_google_fonts": [],
+  "used_typekit_fonts": [
+   {
+    "id": "fvhm",
+    "variations": [
+     "n3",
+     "n4"
+    ]
+   },
+   {
+    "id": "hngy",
+    "variations": [
+     "n4"
+    ]
+   },
+   {
+    "id": "tscy",
+    "variations": [
+     "n6",
+     "n7"
+    ]
+   },
+   {
+    "id": "kmkm",
+    "variations": [
+     "n4",
+     "n3",
+     "n6"
+    ]
+   },
+   {
+    "id": "rqtk",
+    "variations": [
+     "n3"
+    ]
+   },
+   {
+    "id": "jwst",
+    "variations": [
+     "n5"
+    ]
+   }
+  ],
+  "used_typetoday_fonts": [],
+  "used_webtype_fonts": [],
+  "user": {
+   "_id": "69efceb4db060bbb9afe7e83",
+   "uri": "u525599379",
+   "num_id": 525599379,
+   "permissions": {
+    "can_make_mag_private_by_email": false,
+    "can_use_analytics": false,
+    "must_show_branding": true,
+    "can_use_gtm": false,
+    "white_label": false,
+    "can_use_custom_analytics": false,
+    "can_use_beta_testing": false,
+    "can_use_e_commerce": false,
+    "can_use_forms_file_upload": false,
+    "forms_file_upload_limit": 0,
+    "forms_file_upload_count": 1,
+    "allow_index": false,
+    "can_use_iframe": false
+   }
+  },
+  "version": 2,
+  "widgetAddCounter": 2212,
+  "hasAnimations": true,
+  "usedAnimationTypes": {
+   "hover": true,
+   "scroll": true,
+   "click": true
+  },
+  "cover": "https://c-p.rmcdn.net/69efceb4db060bbb9afe7e83/6302960/Screenshot-e82c1817-a957-4ffb-a453-1e17c99aca6e_readyscr.jpg",
+  "must_show_branding": true,
+  "isInternal": false
+ },
+ "isDomainViewer": false,
+ "domainForUser": false,
+ "homepageRewrite": false,
+ "isDownloadedSource": false,
+ "exportBasePath": ""
+}

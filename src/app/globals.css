@@ -1,0 +1,405 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   Tipografía
+   Cada token apunta al sustituto libre. Si NEXT_PUBLIC_ADOBE_FONTS_KIT está
+   definido, <AdobeFonts> añade la clase `fonts-adobe` a <html> y estas mismas
+   variables pasan a resolver a las familias originales. Ningún componente
+   nombra una fuente concreta: todos usan var(--font-*).
+   ========================================================================== */
+
+:root {
+  --font-sans: var(--font-sans-local), ui-sans-serif, system-ui, sans-serif;
+  --font-grotesk: var(--font-grotesk-local), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-local), ui-serif, Georgia, serif;
+  --font-round: var(--font-round-local), ui-sans-serif, system-ui, sans-serif;
+}
+
+html.fonts-adobe {
+  --font-sans: 'dm-sans', var(--font-sans-local), sans-serif;
+  --font-grotesk: 'aktiv-grotesk', var(--font-grotesk-local), sans-serif;
+  --font-display: 'benton-modern-display-condensed', var(--font-display-local), serif;
+  --font-round: 'all-round-gothic', var(--font-round-local), sans-serif;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-grotesk: var(--font-grotesk);
+  --font-display: var(--font-display);
+  --font-round: var(--font-round);
+}
+
+/* ==========================================================================
+   Lienzo
+   El diseño original es un lienzo de posición absoluta de 1024 unidades de
+   ancho (320 en móvil). En vez de escalarlo con JavaScript, se define una
+   unidad de diseño `--u` y toda la geometría se expresa como múltiplo suyo.
+   Así el escalado es puro CSS: sin flash de hidratación y sin listeners.
+
+     ancho ≥ 1024px   →  --u = 1px            lienzo 1024 centrado, sin escalar
+     768 – 1023px     →  --u = 100cqw / 1024  lienzo 1024 escalado a la pantalla
+     ancho < 768px    →  --u = 100cqw / 320   lienzo 320 escalado a la pantalla
+
+   Coincide con el comportamiento medido en el sitio original (desktop sin
+   escalar y centrado, tablet a escala ancho/1024, móvil a escala ancho/320).
+   ========================================================================== */
+
+@property --u {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 1px;
+}
+
+.rm-stage {
+  container-type: inline-size;
+  width: 100%;
+  /* Las páginas más cortas que la ventana se centran verticalmente, igual que
+     el original (medido: una página de 753 unidades en un viewport de 1200
+     arranca en 223,5 px = (1200 − 753) / 2). `margin-block: auto` centra
+     cuando sobra espacio y no desborda por arriba cuando falta, que es lo que
+     rompería un `justify-content: center`. */
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.rm-canvas {
+  margin-block: auto;
+  --u: calc(100cqw / 1024);
+  position: relative;
+  width: calc(1024 * var(--u));
+  height: calc(var(--rm-h) * var(--u));
+  margin-inline: auto;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .rm-canvas {
+    --u: 1px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .rm-canvas {
+    --u: calc(100cqw / 320);
+    width: calc(320 * var(--u));
+    height: calc(var(--rm-mh) * var(--u));
+    /* En móvil el proyecto usa alineación superior (phoneVerticalAlign: top). */
+    margin-block: 0 auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Bloques
+   Cada bloque lleva su geometría de ambos viewports como variables inline
+   (--dx/--dy/… para desktop, --mx/--my/… para móvil). El breakpoint solo
+   cambia qué grupo de variables se lee: el DOM es el mismo, así que las
+   imágenes no se descargan dos veces.
+   -------------------------------------------------------------------------- */
+
+.rm-block {
+  position: absolute;
+  left: calc(var(--dx) * var(--u));
+  top: calc(var(--dy) * var(--u));
+  width: calc(var(--dw) * var(--u));
+  height: calc(var(--dh) * var(--u));
+  z-index: var(--z, 0);
+  display: var(--d-display, block);
+  rotate: var(--d-rotate, 0deg);
+  opacity: var(--opacity, 1);
+  /* Desplazamiento aplicado por las animaciones de clic (el panel del menú). */
+  translate: calc(var(--bx, 0) * var(--u)) calc(var(--by, 0) * var(--u));
+}
+
+.rm-block[data-click-anim] {
+  transition:
+    translate var(--anim-dur, 0.6s) var(--anim-ease, ease),
+    opacity var(--anim-dur, 0.45s) ease;
+}
+
+/* --------------------------------------------------------------------------
+   Capa fija
+   Los elementos anclados al viewport (el wordmark, el botón del menú) viven en
+   una capa aparte que cubre la pantalla, igual que el
+   `.fixed-position-container` del original. Así no los recorta el `overflow`
+   del lienzo y sus anclajes se miden contra la ventana, no contra las 1024
+   unidades del diseño.
+   -------------------------------------------------------------------------- */
+
+.rm-fixed-layer {
+  position: fixed;
+  inset: 0;
+  container-type: inline-size;
+  pointer-events: none;
+  --u: calc(100cqw / 1024);
+}
+
+@media (min-width: 1024px) {
+  .rm-fixed-layer {
+    --u: 1px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .rm-fixed-layer {
+    --u: calc(100cqw / 320);
+  }
+}
+
+.rm-fixed-layer .rm-block {
+  pointer-events: auto;
+}
+
+/* Anclajes. `c` centra respecto a la pantalla y sus coordenadas son un
+   desplazamiento desde ese centro; los cardinales miden desde el borde. */
+[data-fixed='c'] {
+  left: 50%;
+  top: 50%;
+  margin-left: calc((var(--dx) - var(--dw) / 2) * var(--u));
+  margin-top: calc((var(--dy) - var(--dh) / 2) * var(--u));
+}
+
+[data-fixed='nw'] {
+  left: calc(var(--dx) * var(--u));
+  top: calc(var(--dy) * var(--u));
+}
+
+[data-fixed='ne'] {
+  left: auto;
+  right: calc(var(--dx) * var(--u));
+  top: calc(var(--dy) * var(--u));
+}
+
+[data-fixed='sw'] {
+  left: calc(var(--dx) * var(--u));
+  top: auto;
+  bottom: calc(var(--dy) * var(--u));
+}
+
+[data-fixed='se'] {
+  left: auto;
+  right: calc(var(--dx) * var(--u));
+  top: auto;
+  bottom: calc(var(--dy) * var(--u));
+}
+
+@media (max-width: 767.98px) {
+  .rm-block {
+    left: calc(var(--mx) * var(--u));
+    top: calc(var(--my) * var(--u));
+    width: calc(var(--mw) * var(--u));
+    height: calc(var(--mh) * var(--u));
+    display: var(--m-display, block);
+    rotate: var(--m-rotate, 0deg);
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  [data-fixed-mobile='c'] {
+    left: 50%;
+    top: 50%;
+    margin-left: calc((var(--mx) - var(--mw) / 2) * var(--u));
+    margin-top: calc((var(--my) - var(--mh) / 2) * var(--u));
+  }
+
+  [data-fixed-mobile='nw'] {
+    left: calc(var(--mx) * var(--u));
+    top: calc(var(--my) * var(--u));
+  }
+
+  [data-fixed-mobile='ne'] {
+    left: auto;
+    right: calc(var(--mx) * var(--u));
+    top: calc(var(--my) * var(--u));
+  }
+
+  [data-fixed-mobile='sw'] {
+    left: calc(var(--mx) * var(--u));
+    top: auto;
+    bottom: calc(var(--my) * var(--u));
+  }
+
+  [data-fixed-mobile='se'] {
+    left: auto;
+    right: calc(var(--mx) * var(--u));
+    top: auto;
+    bottom: calc(var(--my) * var(--u));
+  }
+}
+
+/* Capa que transforman las animaciones de scroll. Va dentro del bloque para no
+   alterar su caja ni su anclaje; escala alrededor de su propio centro. */
+.rm-anim {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  translate: calc(var(--tx, 0) * var(--u)) calc(var(--ty, 0) * var(--u));
+  scale: var(--sc, 1);
+  rotate: var(--rot, 0deg);
+  opacity: var(--op, 1);
+  will-change: translate, scale;
+}
+
+/* --------------------------------------------------------------------------
+   Texto
+   Tamaños, interlineado y tracking también en unidades de diseño, para que la
+   tipografía escale exactamente igual que la maqueta.
+   -------------------------------------------------------------------------- */
+
+.rm-text {
+  width: 100%;
+  height: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.rm-p {
+  font-family: var(--rm-font, var(--font-sans));
+  font-size: calc(var(--rm-fs, 16) * var(--u));
+  line-height: calc(var(--rm-lh, 20) * var(--u));
+  letter-spacing: calc(var(--rm-ls, 0) * var(--u));
+  font-weight: var(--rm-fw, 400);
+  font-variation-settings: var(--rm-fvs, normal);
+  text-transform: var(--rm-tt, none);
+  text-align: var(--rm-ta, left);
+  color: var(--rm-color, #000);
+  margin: 0;
+}
+
+.rm-link {
+  color: inherit;
+  text-decoration: var(--rm-link-decoration, none);
+  text-decoration-thickness: calc(var(--rm-link-size, 1) * var(--u));
+  text-underline-offset: calc(var(--rm-link-gap, 2) * var(--u));
+  transition: color 0.25s ease;
+}
+
+.rm-link:hover {
+  color: var(--rm-link-hover, inherit);
+}
+
+/* --------------------------------------------------------------------------
+   Imágenes y formas
+   -------------------------------------------------------------------------- */
+
+.rm-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--rm-radius-tl, var(--rm-radius, 0)) * var(--u))
+    calc(var(--rm-radius-tr, var(--rm-radius, 0)) * var(--u))
+    calc(var(--rm-radius-br, var(--rm-radius, 0)) * var(--u))
+    calc(var(--rm-radius-bl, var(--rm-radius, 0)) * var(--u));
+}
+
+.rm-image img,
+.rm-image svg,
+.rm-image > div {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rm-image--contain img,
+.rm-image--contain svg {
+  object-fit: contain;
+}
+
+/* Imagen recortada: se dibuja completa a `original × scale` y se desplaza
+   `-crop × scale`, de modo que por la ventana del bloque solo asome el recorte
+   elegido en el diseño. Ver ImageView.tsx. */
+.rm-image--cropped img {
+  position: absolute;
+  left: calc(var(--c-x) * var(--u));
+  top: calc(var(--c-y) * var(--u));
+  width: calc(var(--c-w) * var(--u));
+  height: calc(var(--c-h) * var(--u));
+  max-width: none;
+  object-fit: fill;
+}
+
+@media (max-width: 767.98px) {
+  .rm-image--cropped img {
+    left: calc(var(--mc-x) * var(--u));
+    top: calc(var(--mc-y) * var(--u));
+    width: calc(var(--mc-w) * var(--u));
+    height: calc(var(--mc-h) * var(--u));
+  }
+}
+
+.rm-shape {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--rm-radius, 0) * var(--u));
+  background-color: var(--rm-fill, transparent);
+}
+
+/* Las "líneas" del original son rectángulos con borde inferior: se usan como
+   reglas horizontales en las tablas de ficha técnica. */
+.rm-shape--line {
+  background: none;
+  border-bottom: calc(var(--rm-weight, 1) * var(--u)) var(--rm-stroke, solid)
+    var(--rm-fill, #000);
+}
+
+.rm-shape--ellipse {
+  border-radius: 50%;
+}
+
+/* --------------------------------------------------------------------------
+   Alternancia entre viewports
+   Solo para los pocos bloques que tienen contenido distinto (no solo geometría
+   distinta) en móvil y en desktop.
+   -------------------------------------------------------------------------- */
+
+/* La especificidad importa: `.rm-image img` ya fija `display: block`, así que
+   estos selectores se cualifican con el contenedor para poder ganarle. Sin
+   esto, la variante móvil se dibujaba encima de la de escritorio. */
+.rm-only-mobile,
+.rm-image .rm-only-mobile,
+.rm-text.rm-only-mobile {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .rm-only-desktop,
+  .rm-image .rm-only-desktop,
+  .rm-text.rm-only-desktop {
+    display: none;
+  }
+
+  .rm-only-mobile,
+  .rm-image .rm-only-mobile,
+  .rm-text.rm-only-mobile {
+    display: block;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+html,
+body {
+  background-color: var(--rm-bg, #efefef);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

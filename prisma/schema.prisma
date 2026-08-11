@@ -1,0 +1,336 @@
+// Portafolio de Caroline Contreras — modelo de contenido.
+//
+// El sitio original (Readymag) es un lienzo de posición absoluta: cada elemento
+// tiene coordenadas propias en dos viewports independientes (1024px y 320px).
+// Este schema conserva ese modelo para poder reproducir el diseño 1:1, y encima
+// añade entidades semánticas (Project, TextStyle, SiteSettings) para que el CMS
+// presente formularios legibles en lugar de coordenadas sueltas.
+
+// Prisma 7: la URL de conexión vive en prisma.config.ts, no aquí, y el cliente
+// se instancia con un driver adapter (ver src/lib/prisma.ts).
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum PageKind {
+  HOME
+  ABOUT
+  CONTACT
+  PROJECT
+  CUSTOM
+}
+
+enum BlockKind {
+  TEXT
+  IMAGE
+  SHAPE
+}
+
+enum BlockScope {
+  PAGE //  pertenece a una página concreta
+  GLOBAL //  se dibuja sobre todas las páginas (el menú hamburguesa)
+}
+
+enum ShapeKind {
+  RECTANGLE
+  LINE
+  ELLIPSE
+  TRIANGLE
+}
+
+enum AnimationKind {
+  SCROLL
+  HOVER
+  CLICK
+}
+
+// Token tipográfico. El CMS elige un token, no una familia concreta: así,
+// cambiar los sustitutos libres por el kit real de Adobe Fonts es tocar una
+// sola variable CSS y no 150 bloques de contenido.
+enum FontToken {
+  SANS //  DM Sans            (original: DM Sans — exacta, Google Fonts)
+  GROTESK //  Inter              (original: Aktiv Grotesk)
+  DISPLAY //  Instrument Serif   (original: Benton Modern Display Condensed)
+  ROUND //  Poppins            (original: All Round Gothic)
+}
+
+// ---------------------------------------------------------------------------
+// Acceso al CMS
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Ajustes globales del sitio (fila única)
+// ---------------------------------------------------------------------------
+
+model SiteSettings {
+  id String @id @default("singleton")
+
+  siteTitle       String @default("Caroline Contreras")
+  metaDescription String @default("")
+  backgroundColor String @default("#EFEFEF")
+
+  // Geometría del lienzo. Cambiarlas reescala todo el sitio de forma coherente.
+  desktopWidth     Int @default(1024)
+  mobileWidth      Int @default(320)
+  tabletBreakpoint Int @default(768)
+
+  // Contacto
+  email        String  @default("")
+  instagramUrl String?
+  linkedinUrl  String?
+
+  // Cuando Caroline tenga su proyecto web en fonts.adobe.com, este ID activa
+  // las fuentes originales y desactiva los sustitutos libres.
+  adobeFontsKit String?
+
+  faviconId String?
+  favicon   Asset?  @relation("SettingsFavicon", fields: [faviconId], references: [id], onDelete: SetNull)
+  ogImageId String?
+  ogImage   Asset?  @relation("SettingsOgImage", fields: [ogImageId], references: [id], onDelete: SetNull)
+
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Páginas
+// ---------------------------------------------------------------------------
+
+model Page {
+  id        String   @id @default(cuid())
+  slug      String   @unique //  "" para el home
+  kind      PageKind
+  title     String //  nombre interno, visible solo en el CMS
+  order     Int      @default(0)
+  published Boolean  @default(true)
+
+  // Alto del lienzo en cada viewport, en unidades de diseño (1024 / 320).
+  heightDesktop Int
+  heightMobile  Int
+
+  // Si es null se hereda el color de SiteSettings.
+  backgroundColor String?
+
+  seoTitle       String?
+  seoDescription String?
+  ogImageId      String?
+  ogImage        Asset?  @relation("PageOgImage", fields: [ogImageId], references: [id], onDelete: SetNull)
+
+  blocks      Block[]   @relation("PageBlocks")
+  linkedFrom  Block[]   @relation("BlockPageLink")
+  navItems    NavItem[]
+  project     Project?
+  nextProject Project[] @relation("ProjectNextPage")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// Metadatos semánticos de las páginas de proyecto. El lienzo sigue viviendo en
+// Block[]; esto existe para que el CMS y los listados tengan datos estructurados.
+model Project {
+  id     String @id @default(cuid())
+  pageId String @unique
+  page   Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  name        String //  "Norologio"
+  client      String? //  "Alessi"
+  year        String? //  "2026"
+  supervision String? //  "Istituto Marangoni"
+  summary     String?
+  order       Int     @default(0)
+  featured    Boolean @default(true) //  aparece en el collage del home
+
+  coverId String?
+  cover   Asset?  @relation("ProjectCover", fields: [coverId], references: [id], onDelete: SetNull)
+
+  // Proyecto sugerido en la sección "Discover next".
+  nextPageId String?
+  nextPage   Page?   @relation("ProjectNextPage", fields: [nextPageId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+}
+
+// Entradas del menú hamburguesa.
+model NavItem {
+  id     String  @id @default(cuid())
+  label  String
+  order  Int     @default(0)
+  pageId String?
+  page   Page?   @relation(fields: [pageId], references: [id], onDelete: SetNull)
+  url    String? //  alternativa a pageId, para enlaces externos
+
+  @@index([order])
+}
+
+// ---------------------------------------------------------------------------
+// Bloques del lienzo
+// ---------------------------------------------------------------------------
+
+model Block {
+  id     String     @id @default(cuid())
+  scope  BlockScope @default(PAGE)
+  pageId String?
+  page   Page?      @relation("PageBlocks", fields: [pageId], references: [id], onDelete: Cascade)
+
+  kind BlockKind
+  name String? //  etiqueta del CMS, p. ej. "Project1"
+  z    Int       @default(0)
+
+  // --- Geometría desktop (lienzo de 1024) ---
+  dX        Float?
+  dY        Float?
+  dW        Float?
+  dH        Float?
+  dRotation Float   @default(0)
+  dHidden   Boolean @default(false)
+  // "c" = anclado al viewport y centrado (no se desplaza con el scroll)
+  dFixed    String?
+
+  // --- Geometría móvil (lienzo de 320) ---
+  mX        Float?
+  mY        Float?
+  mW        Float?
+  mH        Float?
+  mRotation Float   @default(0)
+  mHidden   Boolean @default(false)
+  mFixed    String?
+
+  opacity Float @default(1)
+
+  // --- Contenido, según `kind` ---
+  // TEXT   → { paragraphs: [{ text, styleKey, align, lineHeight, runs: [...] }] }
+  text  Json?
+  // SHAPE  → { kind, color, opacity, radius, borderWidth, borderColor }
+  shape Json?
+  // IMAGE  → { crop: {x,y,w,h}, scale, radius, alt, objectFit }
+  image Json?
+
+  assetId String?
+  asset   Asset?  @relation("BlockAsset", fields: [assetId], references: [id], onDelete: SetNull)
+
+  // Algunos widgets usan una imagen o un recorte distinto en móvil.
+  mobileAssetId String?
+  mobileAsset   Asset?  @relation("BlockMobileAsset", fields: [mobileAssetId], references: [id], onDelete: SetNull)
+  mobileImage   Json?
+  mobileText    Json?
+
+  // --- Enlaces ---
+  linkPageId String?
+  linkPage   Page?   @relation("BlockPageLink", fields: [linkPageId], references: [id], onDelete: SetNull)
+  linkUrl    String?
+  linkTarget String  @default("_self")
+
+  // --- Animaciones ---
+  // [{ kind: "SCROLL"|"HOVER"|"CLICK", steps: [...], triggerBlockIds: [...] }]
+  animations Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pageId, z])
+  @@index([scope])
+}
+
+// ---------------------------------------------------------------------------
+// Sistema tipográfico
+// ---------------------------------------------------------------------------
+
+model TextStyle {
+  id    String @id @default(cuid())
+  key   String @unique //  slug estable referenciado por los párrafos
+  label String //  nombre visible en el CMS, p. ej. "P1 DM"
+
+  fontToken       FontToken @default(SANS)
+  // DM Sans es variable: 14 / 18 / 36 reproducen las tres versiones ópticas
+  // que usa el original (DM Sans, DM Sans 18pt, DM Sans 36pt).
+  fontOpticalSize Int?
+  fontWeight      Int       @default(400)
+  fontSize        Float
+  lineHeight      Float
+  letterSpacing   Float     @default(0)
+  textTransform   String    @default("none")
+  textAlign       String    @default("left")
+  color           String    @default("#000000")
+
+  order Int @default(0)
+
+  @@index([order])
+}
+
+model LinkStyle {
+  id    String @id @default(cuid())
+  key   String @unique
+  label String
+
+  color          String @default("#000000")
+  decoration     String @default("none") //  none | solid | dashed | dotted
+  decorationSize Float  @default(1)
+  decorationGap  Float  @default(0)
+
+  hoverColor      String  @default("#000000")
+  hoverDecoration String  @default("none")
+
+  currentColor      String @default("#000000")
+  currentDecoration String @default("none")
+  currentSize       Float  @default(1)
+  currentGap        Float  @default(0)
+
+  order Int @default(0)
+}
+
+// ---------------------------------------------------------------------------
+// Assets
+// ---------------------------------------------------------------------------
+
+model Asset {
+  id       String @id @default(cuid())
+  url      String //  URL pública (Vercel Blob)
+  pathname String? //  ruta en Blob, necesaria para poder borrar
+  filename String
+  mimeType String
+
+  width  Int?
+  height Int?
+  bytes  Int?
+
+  // Placeholder de carga; el original usa BlurHash, next/image usa base64.
+  blurDataUrl String?
+  alt         String?
+
+  // Los SVG se incrustan en el DOM para poder heredar color y escalar sin pérdida.
+  isSvg     Boolean @default(false)
+  svgMarkup String?
+
+  blocks         Block[]        @relation("BlockAsset")
+  mobileBlocks   Block[]        @relation("BlockMobileAsset")
+  projectCovers  Project[]      @relation("ProjectCover")
+  pageOgImages   Page[]         @relation("PageOgImage")
+  settingsFavicon SiteSettings[] @relation("SettingsFavicon")
+  settingsOgImage SiteSettings[] @relation("SettingsOgImage")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
