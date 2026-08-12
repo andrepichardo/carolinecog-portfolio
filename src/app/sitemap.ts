@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
+import { siteUrl } from '@/lib/site-url';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+  const base = siteUrl();
   const pages = await prisma.page.findMany({
     where: { published: true },
     select: { slug: true, updatedAt: true, kind: true },

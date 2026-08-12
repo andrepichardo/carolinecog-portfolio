@@ -22,8 +22,9 @@ next-env.d.ts
 .env
 .env*.local
 
-# prisma
-/prisma/generated
+# prisma — el cliente es código generado; lo recrea `prisma generate`, que corre
+# en `postinstall` y al principio de `build`.
+/src/generated
 
 # vercel
 .vercel

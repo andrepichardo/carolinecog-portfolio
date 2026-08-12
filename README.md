@@ -185,8 +185,11 @@ Para desplegar:
    - `DIRECT_URL` — cadena directa, sin `-pooler` (la usan las migraciones)
    - `AUTH_SECRET`
    - `ADMIN_EMAIL` y `ADMIN_PASSWORD`
-   - `NEXT_PUBLIC_SITE_URL` — el dominio final; afecta al sitemap, a robots.txt
-     y a las etiquetas Open Graph
+   - `NEXT_PUBLIC_SITE_URL` — **solo si hay dominio propio**. Sin ella se usa
+     el dominio de producción que Vercel inyecta, así que el sitemap y las
+     etiquetas Open Graph salen correctos igualmente (ver `src/lib/site-url.ts`).
+     Ojo: son valores que se resuelven **en tiempo de compilación**, así que
+     añadirla obliga a redesplegar
    - `NEXT_PUBLIC_ADOBE_FONTS_KIT` — opcional
 3. `BLOB_READ_WRITE_TOKEN` y `BLOB_STORE_ID` los inyecta Vercel al tener el
    store conectado; no hay que añadirlos a mano.

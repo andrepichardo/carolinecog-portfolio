@@ -2,15 +2,15 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { fontVariables } from '@/lib/fonts';
 import { getSettings } from '@/lib/content';
+import { siteUrl } from '@/lib/site-url';
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   const title = settings?.siteTitle ?? 'Caroline Contreras';
   const description = settings?.metaDescription ?? '';
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
   return {
-    metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+    metadataBase: new URL(siteUrl()),
     title: { default: title, template: `%s — ${title}` },
     description,
     icons: settings?.favicon?.url ? { icon: settings.favicon.url } : undefined,
