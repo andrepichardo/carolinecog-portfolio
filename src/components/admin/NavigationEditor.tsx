@@ -22,7 +22,9 @@ export function NavigationEditor({
   const [message, setMessage] = useState<string | null>(null);
 
   const patch = (index: number, next: Partial<NavRow>) => {
-    setItems(items.map((item, i) => (i === index ? { ...item, ...next } : item)));
+    setItems(
+      items.map((item, i) => (i === index ? { ...item, ...next } : item)),
+    );
     setMessage(null);
   };
 
@@ -36,70 +38,91 @@ export function NavigationEditor({
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-[13px] text-[var(--admin-muted)]">
-        Este listado alimenta los enlaces del menú. El aspecto (tipografía, posición del panel) se
-        edita como cualquier otro bloque, desde la página correspondiente.
+    <div>
+      <p className="admin-muted mb-6 max-w-prose">
+        These are the links inside the hamburger menu. How it looks — typeface,
+        where the panel sits — is edited like any other block, from its page.
       </p>
 
-      {items.map((item, index) => (
-        <div key={index} className="admin-card grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_auto]">
-          <label className="block">
-            <span className="admin-label">Texto</span>
-            <input
-              className="admin-field"
-              value={item.label}
-              onChange={(e) => patch(index, { label: e.target.value })}
-            />
-          </label>
-          <label className="block">
-            <span className="admin-label">Destino</span>
-            <select
-              className="admin-field"
-              value={item.pageId ?? ''}
-              onChange={(e) => patch(index, { pageId: e.target.value || null, url: null })}
-            >
-              <option value="">— URL externa —</option>
-              {pages.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title} (/{p.slug})
-                </option>
-              ))}
-            </select>
-            {!item.pageId ? (
+      <div className="border-t border-(--rule-strong)">
+        {items.map((item, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-1 gap-4 border-b border-(--rule) py-4 sm:grid-cols-[1fr_1fr_auto]"
+          >
+            <label className="block">
+              <span className="admin-label">Label</span>
               <input
-                className="admin-field mt-2"
-                placeholder="https://…"
-                value={item.url ?? ''}
-                onChange={(e) => patch(index, { url: e.target.value || null })}
+                className="admin-field"
+                value={item.label}
+                onChange={(e) => patch(index, { label: e.target.value })}
               />
-            ) : null}
-          </label>
-          <div className="flex items-end gap-1">
-            <button type="button" className="admin-btn" onClick={() => move(index, -1)} aria-label="Subir">
-              ↑
-            </button>
-            <button type="button" className="admin-btn" onClick={() => move(index, 1)} aria-label="Bajar">
-              ↓
-            </button>
-            <button
-              type="button"
-              className="admin-btn admin-btn--danger"
-              onClick={() => setItems(items.filter((_, i) => i !== index))}
-            >
-              Quitar
-            </button>
+            </label>
+            <label className="block">
+              <span className="admin-label">Destination</span>
+              <select
+                className="admin-field"
+                value={item.pageId ?? ''}
+                onChange={(e) =>
+                  patch(index, { pageId: e.target.value || null, url: null })
+                }
+              >
+                <option value="">— external URL —</option>
+                {pages.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title} (/{p.slug})
+                  </option>
+                ))}
+              </select>
+              {!item.pageId ? (
+                <input
+                  className="admin-field mt-3"
+                  placeholder="https://…"
+                  value={item.url ?? ''}
+                  onChange={(e) =>
+                    patch(index, { url: e.target.value || null })
+                  }
+                />
+              ) : null}
+            </label>
+            <div className="flex items-end gap-2">
+              <button
+                type="button"
+                className="admin-btn admin-btn--ghost"
+                onClick={() => move(index, -1)}
+                aria-label="Move up"
+              >
+                ↑
+              </button>
+              <button
+                type="button"
+                className="admin-btn admin-btn--ghost"
+                onClick={() => move(index, 1)}
+                aria-label="Move down"
+              >
+                ↓
+              </button>
+              <button
+                type="button"
+                className="admin-btn admin-btn--ghost text-(--danger)"
+                onClick={() => setItems(items.filter((_, i) => i !== index))}
+              >
+                Remove
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="mt-6 flex flex-wrap items-center gap-3">
         <button
           type="button"
           className="admin-btn"
-          onClick={() => setItems([...items, { label: 'nuevo', pageId: null, url: '' }])}
+          onClick={() =>
+            setItems([...items, { label: 'new', pageId: null, url: '' }])
+          }
         >
-          + Añadir entrada
+          + Add item
         </button>
         <button
           type="button"
@@ -108,13 +131,13 @@ export function NavigationEditor({
           onClick={() =>
             startTransition(async () => {
               const result = await saveNavItems(items);
-              setMessage(result.ok ? 'Menú guardado' : result.error);
+              setMessage(result.ok ? 'Menu saved' : result.error);
             })
           }
         >
-          {pending ? 'Guardando…' : 'Guardar menú'}
+          {pending ? 'Saving…' : 'Save menu'}
         </button>
-        {message ? <span className="text-[13px] text-[var(--admin-muted)]">{message}</span> : null}
+        {message ? <span className="admin-eyebrow">{message}</span> : null}
       </div>
     </div>
   );

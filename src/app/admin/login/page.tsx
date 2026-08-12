@@ -12,10 +12,14 @@ export default async function LoginPage({
   if (session?.user) redirect(next && next.startsWith('/admin') ? next : '/admin');
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <h1 className="mb-1 text-2xl font-semibold tracking-tight">Caroline Contreras</h1>
-        <p className="mb-7 text-[var(--admin-muted)]">Panel de contenido</p>
+    <main className="flex min-h-dvh items-center justify-center px-6 py-16">
+      <div className="w-full max-w-[320px]">
+        <h1 className="admin-display text-[44px]">
+          Caroline
+          <br />
+          Contreras
+        </h1>
+        <p className="admin-eyebrow mt-3 mb-12">Content</p>
         <LoginForm next={next} initialError={error} />
       </div>
     </main>

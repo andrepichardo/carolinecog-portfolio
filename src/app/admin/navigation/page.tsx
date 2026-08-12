@@ -15,8 +15,8 @@ export default async function NavigationPage() {
 
   return (
     <AdminShell
-      title="Menú"
-      description="Entradas del menú hamburguesa."
+      title="Menu"
+      description="Items in the hamburger menu."
     >
       <NavigationEditor
         items={items.map((i) => ({ id: i.id, label: i.label, pageId: i.pageId, url: i.url }))}

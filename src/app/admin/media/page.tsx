@@ -11,29 +11,35 @@ export default async function MediaPage() {
   const assets = await prisma.asset.findMany({
     orderBy: { createdAt: 'desc' },
     include: {
-      _count: { select: { blocks: true, mobileBlocks: true } },
+      // Se traen las páginas donde aparece cada imagen para poder decir dónde
+      // está en uso, en vez de limitarse a bloquear el borrado sin explicar.
+      blocks: { select: { page: { select: { id: true, title: true } } } },
+      mobileBlocks: { select: { page: { select: { id: true, title: true } } } },
     },
   });
 
   return (
-    <AdminShell
-      wide
-      title="Imágenes"
-      description="Biblioteca compartida por todas las páginas."
-    >
+    <AdminShell wide title="Images" description="One library, shared across every page.">
       <MediaLibrary
-        assets={assets.map((a) => ({
-          id: a.id,
-          url: a.url,
-          filename: a.filename,
-          alt: a.alt,
-          isSvg: a.isSvg,
-          width: a.width,
-          height: a.height,
-          bytes: a.bytes,
-          uses: a._count.blocks + a._count.mobileBlocks,
-          isExternal: !a.pathname,
-        }))}
+        assets={assets.map((a) => {
+          const pages = new Map<string, string>();
+          for (const b of [...a.blocks, ...a.mobileBlocks]) {
+            if (b.page) pages.set(b.page.id, b.page.title);
+          }
+          return {
+            id: a.id,
+            url: a.url,
+            filename: a.filename,
+            alt: a.alt,
+            isSvg: a.isSvg,
+            width: a.width,
+            height: a.height,
+            bytes: a.bytes,
+            uses: a.blocks.length + a.mobileBlocks.length,
+            usedOn: [...pages.entries()].map(([id, title]) => ({ id, title })),
+            isExternal: !a.pathname,
+          };
+        })}
       />
     </AdminShell>
   );

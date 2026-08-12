@@ -16,7 +16,7 @@ export async function signInAction(formData: FormData) {
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      return { error: 'No se pudo iniciar sesión. Revisa el correo y la contraseña.' };
+      return { error: 'Could not sign in. Check the email and password.' };
     }
     throw error;
   }

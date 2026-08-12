@@ -25,14 +25,14 @@ const ALLOWED = new Set([
 export async function POST(request: Request) {
   const session = await auth();
   if (!session?.user) {
-    return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    return NextResponse.json({ error: 'Not authorised' }, { status: 401 });
   }
 
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return NextResponse.json(
       {
         error:
-          'Falta BLOB_READ_WRITE_TOKEN. Conecta un store de Blob al proyecto en Vercel (Storage → Blob).',
+          'BLOB_READ_WRITE_TOKEN is missing. Connect a Blob store to the project in Vercel (Storage → Blob).',
       },
       { status: 500 }
     );
@@ -41,14 +41,14 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const file = formData.get('file');
   if (!(file instanceof File)) {
-    return NextResponse.json({ error: 'No se recibió ningún archivo' }, { status: 400 });
+    return NextResponse.json({ error: 'No file received' }, { status: 400 });
   }
   if (file.size > MAX_BYTES) {
-    return NextResponse.json({ error: 'El archivo supera los 25 MB' }, { status: 413 });
+    return NextResponse.json({ error: 'File is larger than 25 MB' }, { status: 413 });
   }
   if (!ALLOWED.has(file.type)) {
     return NextResponse.json(
-      { error: `Formato no admitido: ${file.type || 'desconocido'}` },
+      { error: `Unsupported format: ${file.type || 'unknown'}` },
       { status: 415 }
     );
   }

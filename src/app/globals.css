@@ -71,6 +71,12 @@ html.fonts-adobe {
   height: calc(var(--rm-h) * var(--u));
   margin-inline: auto;
   overflow: hidden;
+  /* Los bloques llevan z-index heredados del diseño (302 … 376). Sin aislar,
+     compiten en el contexto raíz contra las capas fijas —que al ser
+     `position: fixed` crean su propio contexto y cuentan como z-index 0—, y
+     acababan tapando el wordmark y el menú. Aislándolos, esos números solo
+     ordenan el contenido de la página entre sí. */
+  isolation: isolate;
 }
 
 @media (min-width: 1024px) {
@@ -126,7 +132,9 @@ html.fonts-adobe {
    unidades del diseño.
    -------------------------------------------------------------------------- */
 
-.rm-fixed-layer {
+.rm-fixed-layer,
+.rm-menu-layer,
+.rm-menu-icons {
   position: fixed;
   inset: 0;
   container-type: inline-size;
@@ -134,20 +142,89 @@ html.fonts-adobe {
   --u: calc(100cqw / 1024);
 }
 
+/* Orden de apilamiento del sitio, de abajo arriba:
+   contenido de la página → wordmark anclado → panel del menú → sus iconos.
+   Se declara explícito para que no dependa del orden del DOM. */
+.rm-fixed-layer {
+  z-index: 90;
+}
+
+.rm-menu-layer {
+  z-index: 100;
+}
+
+.rm-menu-icons {
+  z-index: 110;
+}
+
 @media (min-width: 1024px) {
-  .rm-fixed-layer {
+  .rm-fixed-layer,
+  .rm-menu-layer,
+  .rm-menu-icons {
     --u: 1px;
   }
 }
 
 @media (max-width: 767.98px) {
-  .rm-fixed-layer {
+  .rm-fixed-layer,
+  .rm-menu-layer,
+  .rm-menu-icons {
     --u: calc(100cqw / 320);
   }
 }
 
-.rm-fixed-layer .rm-block {
+.rm-fixed-layer .rm-block,
+.rm-menu-layer .rm-block,
+.rm-menu-icons .rm-block {
   pointer-events: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Menú
+   El panel del diseño original es un rectángulo de tamaño fijo: en una pantalla
+   ancha no llega a cubrirla entera y, cerrado, sus enlaces asoman por el borde
+   derecho. Aquí el panel ocupa siempre la ventana completa y se aparta un ancho
+   de pantalla al cerrarse, así que ni deja huecos ni asoma, sea cual sea el
+   tamaño. El movimiento visible —los enlaces entrando desde la derecha— es el
+   mismo, porque el panel comparte color con el fondo de la página.
+   -------------------------------------------------------------------------- */
+
+.rm-menu {
+  position: absolute;
+  inset: 0;
+  /* Un ancho de ventana no basta: el bloque de enlaces empieza a la izquierda
+     del borde y en móvil es más ancho que la pantalla, así que al cerrarse su
+     lado izquierdo se quedaba dentro hasta que `visibility` lo ocultaba de
+     golpe. Con vez y media se va entero antes de desaparecer. */
+  translate: 150vw;
+  visibility: hidden;
+  /* Cerrado deja pasar el ratón a la página; abierto lo intercepta, para que
+     no se pueda pulsar por accidente lo que queda detrás del panel. */
+  pointer-events: none;
+  transition:
+    translate var(--menu-duration, 0.6s) var(--menu-ease, ease),
+    visibility 0s var(--menu-duration, 0.6s);
+}
+
+.rm-menu[data-open='true'] {
+  translate: 0;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    translate var(--menu-duration, 0.6s) var(--menu-ease, ease),
+    visibility 0s;
+}
+
+.rm-menu__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--menu-fill, #efefef);
+}
+
+/* Mientras el menú está abierto la página no debe desplazarse por detrás. */
+body[data-menu-open='true'] {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 /* Anclajes. `c` centra respecto a la pantalla y sus coordenadas son un

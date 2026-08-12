@@ -1,5 +1,6 @@
 'use server';
 
+import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
@@ -31,7 +32,7 @@ async function guard<T>(fn: () => Promise<T>): Promise<ActionResult> {
     return { ok: true };
   } catch (error) {
     console.error('[cms]', error);
-    return { ok: false, error: error instanceof Error ? error.message : 'Error inesperado' };
+    return { ok: false, error: error instanceof Error ? error.message : 'Something went wrong' };
   }
 }
 
@@ -41,10 +42,10 @@ async function guard<T>(fn: () => Promise<T>): Promise<ActionResult> {
 
 const pageSchema = z.object({
   id: z.string().min(1),
-  title: z.string().min(1, 'El título no puede estar vacío'),
+  title: z.string().min(1, 'Title cannot be empty'),
   slug: z
     .string()
-    .regex(/^[a-z0-9-]*$/, 'El slug solo admite minúsculas, números y guiones')
+    .regex(/^[a-z0-9-]*$/, 'Slug accepts lowercase letters, numbers and hyphens only')
     .transform((v) => v.trim()),
   published: z.boolean(),
   heightDesktop: z.number().int().min(1).max(20000),
@@ -148,7 +149,7 @@ export async function createBlock(
 
     const defaults = {
       TEXT: {
-        text: { paragraphs: [{ text: 'Nuevo texto', fontSize: 18, lineHeight: 24 }] },
+        text: { paragraphs: [{ text: 'New text', fontSize: 18, lineHeight: 24 }] },
         dW: 300,
         dH: 60,
         mW: 280,
@@ -168,7 +169,7 @@ export async function createBlock(
       data: {
         pageId,
         kind,
-        name: kind === 'TEXT' ? 'Texto' : kind === 'IMAGE' ? 'Imagen' : 'Forma',
+        name: kind === 'TEXT' ? 'Text' : kind === 'IMAGE' ? 'Image' : 'Shape',
         z: (top._max.z ?? 300) + 1,
         dX: 48,
         dY: 48,
@@ -188,7 +189,7 @@ export async function duplicateBlock(id: string): Promise<ActionResult> {
     await prisma.block.create({
       data: {
         ...rest,
-        name: source.name ? `${source.name} (copia)` : null,
+        name: source.name ? `${source.name} (copy)` : null,
         dX: (source.dX ?? 0) + 16,
         dY: (source.dY ?? 0) + 16,
         z: source.z + 1,
@@ -232,6 +233,133 @@ export async function updateProject(input: z.input<typeof projectSchema>): Promi
   return guard(async () => {
     const { id, ...data } = projectSchema.parse(input);
     await prisma.project.update({ where: { id }, data });
+    revalidateSite();
+  });
+}
+
+const newProjectSchema = z.object({
+  name: z.string().min(1, 'Give the project a name'),
+  slug: z
+    .string()
+    .min(1, 'Give the project a web address')
+    .regex(/^[a-z0-9-]+$/, 'The address accepts lowercase letters, numbers and hyphens only'),
+  templatePageId: z.string().nullable(),
+});
+
+/**
+ * Crea un proyecto, opcionalmente copiando otro como plantilla.
+ *
+ * Una página en blanco sería un lienzo vacío de más de dos mil unidades de
+ * alto: inservible como punto de partida. Copiando un proyecto existente se
+ * hereda la retícula, la tipografía y la ficha técnica, y solo queda sustituir
+ * textos e imágenes.
+ *
+ * Al copiar hay dos referencias que no se pueden arrastrar tal cual:
+ *   · `animations[].triggerBlockIds` apunta a otros bloques (las imágenes que
+ *     se atenúan al pasar por encima de un rectángulo invisible);
+ *   · `linkPageId` puede apuntar a la propia página de la plantilla.
+ * Ambas se reescriben hacia los bloques y la página nuevos.
+ */
+export async function createProject(
+  input: z.input<typeof newProjectSchema>
+): Promise<ActionResult & { pageId?: string }> {
+  await requireUser();
+  try {
+    const data = newProjectSchema.parse(input);
+
+    const clash = await prisma.page.findUnique({ where: { slug: data.slug } });
+    if (clash) throw new Error(`The address /${data.slug} is already taken.`);
+
+    const template = data.templatePageId
+      ? await prisma.page.findUnique({
+          where: { id: data.templatePageId },
+          include: { blocks: true, project: true },
+        })
+      : null;
+
+    const lastOrder = await prisma.page.aggregate({ _max: { order: true } });
+    const pageId = randomUUID();
+
+    // Los IDs se generan por adelantado para poder reescribir las referencias
+    // entre bloques antes de insertarlos.
+    const idMap = new Map<string, string>();
+    for (const block of template?.blocks ?? []) idMap.set(block.id, randomUUID());
+
+    const remapAnimations = (animations: unknown) => {
+      if (!Array.isArray(animations)) return animations;
+      return animations.map((animation) => {
+        if (typeof animation !== 'object' || animation === null) return animation;
+        const a = animation as { triggerBlockIds?: unknown };
+        if (!Array.isArray(a.triggerBlockIds)) return animation;
+        return {
+          ...a,
+          triggerBlockIds: a.triggerBlockIds.map((id) =>
+            typeof id === 'string' ? (idMap.get(id) ?? id) : id
+          ),
+        };
+      });
+    };
+
+    await prisma.$transaction(async (tx) => {
+      await tx.page.create({
+        data: {
+          id: pageId,
+          slug: data.slug,
+          kind: 'PROJECT',
+          title: data.name,
+          order: (lastOrder._max.order ?? 0) + 1,
+          published: false, //  nace como borrador: se publica cuando esté lista
+          heightDesktop: template?.heightDesktop ?? 2800,
+          heightMobile: template?.heightMobile ?? 2700,
+          backgroundColor: template?.backgroundColor ?? null,
+        },
+      });
+
+      for (const block of template?.blocks ?? []) {
+        const { id, createdAt, updatedAt, pageId: _oldPage, ...rest } = block;
+        await tx.block.create({
+          data: {
+            ...rest,
+            id: idMap.get(id)!,
+            pageId,
+            // Un enlace a la propia plantilla debe apuntar a la página nueva.
+            linkPageId: block.linkPageId === template?.id ? pageId : block.linkPageId,
+            animations: remapAnimations(block.animations) as never,
+          } as never,
+        });
+      }
+
+      await tx.project.create({
+        data: {
+          pageId,
+          name: data.name,
+          client: template?.project?.client ?? null,
+          year: template?.project?.year ?? null,
+          supervision: template?.project?.supervision ?? null,
+          order: (template?.project?.order ?? 0) + 1,
+          featured: false,
+        },
+      });
+    });
+
+    revalidateSite();
+    return { ok: true, pageId };
+  } catch (error) {
+    console.error('[cms]', error);
+    return { ok: false, error: error instanceof Error ? error.message : 'Something went wrong' };
+  }
+}
+
+/** Borra un proyecto y su página. Los bloques caen en cascada. */
+export async function deleteProject(id: string): Promise<ActionResult> {
+  return guard(async () => {
+    const project = await prisma.project.findUniqueOrThrow({
+      where: { id },
+      select: { pageId: true },
+    });
+    // Borrar la página arrastra sus bloques y el propio proyecto; los demás
+    // proyectos que la tuvieran como "siguiente" se quedan sin ella, no rotos.
+    await prisma.page.delete({ where: { id: project.pageId } });
     revalidateSite();
   });
 }
@@ -331,22 +459,30 @@ export async function updateAssetAlt(id: string, alt: string): Promise<ActionRes
   });
 }
 
-export async function deleteAsset(id: string): Promise<ActionResult> {
+/**
+ * Borra una imagen de la biblioteca.
+ *
+ * Si está en uso hace falta `force`, que confirma que se acepta la
+ * consecuencia: los bloques que la usaban se quedan sin imagen (el schema los
+ * pone a null, no los borra), así que la página sigue funcionando y basta con
+ * asignarles otra desde el editor.
+ */
+export async function deleteAsset(id: string, force = false): Promise<ActionResult> {
   return guard(async () => {
     const asset = await prisma.asset.findUniqueOrThrow({ where: { id } });
     const used = await prisma.block.count({
       where: { OR: [{ assetId: id }, { mobileAssetId: id }] },
     });
-    if (used > 0) {
-      throw new Error(`No se puede borrar: la usan ${used} bloque(s).`);
+    if (used > 0 && !force) {
+      throw new Error(`${used} block(s) still use this image.`);
     }
-    // Solo se borra del almacenamiento lo que subimos nosotros; los assets que
-    // aún apuntan al CDN de Readymag no son nuestros.
+    // Solo se borra del almacenamiento lo que subimos nosotros; un asset que
+    // todavía apunte a un CDN externo no es nuestro.
     if (asset.pathname) {
       try {
         await del(asset.pathname);
       } catch (error) {
-        console.warn('[cms] no se pudo borrar de Blob:', error);
+        console.warn('[cms] could not delete from Blob:', error);
       }
     }
     await prisma.asset.delete({ where: { id } });

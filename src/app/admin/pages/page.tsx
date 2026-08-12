@@ -6,11 +6,11 @@ import { AdminShell } from '@/components/admin/AdminShell';
 export const dynamic = 'force-dynamic';
 
 const KIND_LABEL: Record<string, string> = {
-  HOME: 'Inicio',
-  ABOUT: 'Sobre mí',
-  CONTACT: 'Contacto',
-  PROJECT: 'Proyecto',
-  CUSTOM: 'Personalizada',
+  HOME: 'Home',
+  ABOUT: 'About',
+  CONTACT: 'Contact',
+  PROJECT: 'Project',
+  CUSTOM: 'Custom',
 };
 
 export default async function PagesList() {
@@ -22,28 +22,30 @@ export default async function PagesList() {
   });
 
   return (
-    <AdminShell title="Páginas" description="Cada página es un lienzo con sus propios bloques.">
-      <ul className="flex flex-col gap-2">
+    <AdminShell
+      title="Pages"
+      description="Every page is a canvas with its own blocks."
+    >
+      <ul className="border-t border-(--rule-strong)">
         {pages.map((page) => (
-          <li key={page.id}>
+          <li key={page.id} className="border-b border-(--rule)">
             <Link
               href={`/admin/pages/${page.id}`}
-              className="admin-card flex items-center gap-4 hover:bg-[var(--admin-surface)]"
+              className="group flex items-baseline gap-5 py-5 transition-opacity hover:opacity-60"
             >
-              <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-2 font-medium">
-                  {page.title}
-                  {!page.published ? (
-                    <span className="rounded border border-[var(--admin-border)] px-1.5 py-0.5 text-[11px] text-[var(--admin-muted)]">
-                      borrador
-                    </span>
-                  ) : null}
-                </p>
-                <p className="text-[13px] text-[var(--admin-muted)]">
-                  {KIND_LABEL[page.kind] ?? page.kind} · /{page.slug} · {page._count.blocks} bloques
-                </p>
-              </div>
-              <span className="text-[var(--admin-muted)]" aria-hidden>
+              <span className="admin-eyebrow w-16 shrink-0">
+                {KIND_LABEL[page.kind] ?? page.kind}
+              </span>
+              <span className="admin-display min-w-0 flex-1 truncate text-[26px]">
+                {page.title}
+              </span>
+              <span className="admin-muted hidden text-[12px] sm:block">
+                /{page.slug} · {page._count.blocks} blocks
+              </span>
+              {!page.published ? (
+                <span className="admin-eyebrow">Draft</span>
+              ) : null}
+              <span aria-hidden className="admin-muted">
                 →
               </span>
             </Link>

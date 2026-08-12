@@ -17,7 +17,7 @@ export default async function SettingsPage() {
   ]);
 
   return (
-    <AdminShell title="Ajustes" description="Identidad del sitio, contacto y tipografía global.">
+    <AdminShell title="Settings" description="Site identity, contact details and global typography.">
       <SettingsForm
         settings={{
           siteTitle: settings?.siteTitle ?? 'Caroline Contreras',

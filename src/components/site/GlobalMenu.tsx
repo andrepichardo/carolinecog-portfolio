@@ -14,14 +14,17 @@ interface GlobalMenuProps {
 /**
  * Menú hamburguesa.
  *
- * Reproduce la interacción del original, que es un panel del ancho de la
- * pantalla situado fuera de cuadro y que entra desplazándose. Los cuatro
- * elementos (panel, enlaces, icono de abrir e icono de cerrar) son bloques
- * normales con una animación de tipo `click`; aquí solo se decide el estado y
- * se aplican los valores que esa animación describe.
+ * En el diseño original el panel es un rectángulo de 1068 unidades que vive
+ * fuera de cuadro y entra desplazándose. Eso funciona a la anchura para la que
+ * se dibujó, pero en una pantalla grande deja los bordes sin cubrir y, cerrado,
+ * los enlaces asoman por la derecha. Aquí el panel ocupa la ventana entera y se
+ * retira un ancho completo de pantalla, de modo que el resultado es el mismo a
+ * cualquier tamaño: el panel comparte color con el fondo de la página, así que
+ * lo único que se ve moverse son los enlaces.
  *
- * El original no marca los iconos como botones: se añaden rol, foco, teclado y
- * cierre con Escape, que no cambian nada visual y hacen el menú usable sin ratón.
+ * Los enlaces se dibujan directamente en su posición de apertura (su
+ * coordenada de diseño más el desplazamiento de la animación) y es el panel
+ * quien se mueve, en lugar de animar cada bloque por separado.
  */
 export function GlobalMenu({ blocks, textStyles }: GlobalMenuProps) {
   const [open, setOpen] = useState(false);
@@ -29,20 +32,43 @@ export function GlobalMenu({ blocks, textStyles }: GlobalMenuProps) {
 
   const styleMap = useMemo(() => new Map(textStyles.map((s) => [s.key, s])), [textStyles]);
 
-  // Los disparadores declarados por las animaciones: los dos iconos y el propio
-  // bloque de enlaces (al pulsar un enlace, el menú se cierra).
-  const triggerIds = useMemo(() => {
-    const ids = new Set<string>();
+  // El panel y los enlaces son los bloques que la animación de clic desplaza;
+  // los iconos son los que cambia de opacidad.
+  const { panel, sliding, icons } = useMemo(() => {
+    const sliding: BlockData[] = [];
+    const icons: BlockData[] = [];
+    let panel: BlockData | null = null;
+
     for (const block of blocks) {
-      const click = firstOfKind(block.animations, 'CLICK');
-      for (const id of click?.triggerBlockIds ?? []) ids.add(id);
+      const step = firstOfKind(block.animations, 'CLICK')?.steps[0];
+      if (step?.useMove) {
+        if (block.kind === 'SHAPE' && !panel) panel = block;
+        else sliding.push(block);
+      } else if (step?.useOpacity) {
+        icons.push(block);
+      } else {
+        sliding.push(block);
+      }
     }
-    return ids;
+    return { panel, sliding, icons };
   }, [blocks]);
+
+  const shift = useMemo(() => {
+    const step = panel ? firstOfKind(panel.animations, 'CLICK')?.steps[0] : undefined;
+    return step?.dx ?? -1062;
+  }, [panel]);
+
+  const easing = useMemo(() => {
+    const step = panel ? firstOfKind(panel.animations, 'CLICK')?.steps[0] : undefined;
+    // `ease-out-back` sobrepasa ligeramente el destino antes de asentarse: es
+    // lo que da al panel su entrada con rebote.
+    return step?.acceleration === 'ease-out-back'
+      ? 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+      : 'cubic-bezier(0.45, 0, 0.55, 1)';
+  }, [panel]);
 
   const toggle = useCallback(() => setOpen((v) => !v), []);
 
-  // Navegar cierra el panel.
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -56,77 +82,100 @@ export function GlobalMenu({ blocks, textStyles }: GlobalMenuProps) {
     return () => document.removeEventListener('keydown', onKey);
   }, [open]);
 
+  // Bloquea el desplazamiento de la página mientras el menú está abierto.
+  useEffect(() => {
+    if (open) document.body.dataset.menuOpen = 'true';
+    else delete document.body.dataset.menuOpen;
+    return () => {
+      delete document.body.dataset.menuOpen;
+    };
+  }, [open]);
+
+  const layerStyle = {
+    '--menu-fill': (panel?.shape?.fill ?? '#efefef') as string,
+    '--menu-ease': easing,
+    '--menu-duration': '0.6s',
+  } as CSSProperties;
+
   return (
-    <div className="rm-fixed-layer" data-menu-open={open || undefined}>
-      {blocks.map((block) => {
-        const click = firstOfKind(block.animations, 'CLICK');
-        const step = click?.steps[0];
+    <>
+      <div className="rm-menu-layer" style={layerStyle}>
+        <div
+          className="rm-menu"
+          data-open={open}
+          id="site-menu"
+          aria-hidden={!open}
+          // Cerrado, el panel queda fuera de la ventana; `inert` lo retira
+          // además del foco para que el tabulador no llegue a unos enlaces
+          // invisibles.
+          inert={!open}
+        >
+          <div className="rm-menu__backdrop" />
+          {sliding.map((block) => (
+            <BlockView
+              key={block.id}
+              block={shiftBlock(block, shift)}
+              textStyles={styleMap}
+              attrs={{ onClick: toggle }}
+            />
+          ))}
+        </div>
+      </div>
 
-        const style: CSSProperties = {};
-        if (step) {
-          if (step.useMove) {
-            style['--bx' as never] = (open ? (step.dx ?? 0) : 0) as never;
-            style['--by' as never] = (open ? (step.dy ?? 0) : 0) as never;
-          }
-          if (step.useOpacity) {
-            const from = (step.fromOpacity ?? 100) / 100;
-            const to = (step.opacity ?? 100) / 100;
-            style['--opacity' as never] = (open ? to : from) as never;
-          }
-          // `ease-out-back` sobrepasa ligeramente el destino antes de asentarse:
-          // es lo que da al panel su entrada con rebote.
-          style['--anim-ease' as never] = (step.acceleration === 'ease-out-back'
-            ? 'cubic-bezier(0.34, 1.56, 0.64, 1)'
-            : 'cubic-bezier(0.45, 0, 0.55, 1)') as never;
-        }
+      <div className="rm-menu-icons" style={layerStyle}>
+        {icons.map((block) => {
+          const step = firstOfKind(block.animations, 'CLICK')?.steps[0];
+          const from = (step?.fromOpacity ?? 100) / 100;
+          const to = (step?.opacity ?? 100) / 100;
+          const value = open ? to : from;
+          const hidden = value === 0;
 
-        const isTrigger = triggerIds.has(block.id);
-        const isIcon = isTrigger && block.kind === 'IMAGE';
-
-        const attrs: Record<string, unknown> = {};
-        if (step) attrs['data-click-anim'] = '';
-        if (isTrigger) {
-          attrs.onClick = toggle;
-          attrs.style = undefined; //  no pisar el style calculado
-        }
-        if (isIcon) {
-          attrs.role = 'button';
-          attrs.tabIndex = 0;
-          attrs['aria-label'] = open ? 'Cerrar menú' : 'Abrir menú';
-          attrs['aria-expanded'] = open;
-          // El icono oculto no debe recibir foco ni clics.
-          attrs['aria-hidden'] = isHidden(step, open) || undefined;
-          attrs.onKeyDown = (event: React.KeyboardEvent) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              toggle();
-            }
-          };
-          if (isHidden(step, open)) {
-            attrs.tabIndex = -1;
-            style.pointerEvents = 'none';
-          }
-          style.cursor = 'pointer';
-        }
-        if (isTrigger) delete attrs.style;
-
-        return (
-          <BlockView
-            key={block.id}
-            block={block}
-            textStyles={styleMap}
-            styleOverride={style}
-            attrs={attrs}
-          />
-        );
-      })}
-    </div>
+          return (
+            <BlockView
+              key={block.id}
+              block={block}
+              textStyles={styleMap}
+              styleOverride={
+                {
+                  '--opacity': value,
+                  cursor: 'pointer',
+                  pointerEvents: hidden ? 'none' : undefined,
+                  transition: 'opacity 0.45s ease',
+                } as CSSProperties
+              }
+              attrs={{
+                role: 'button',
+                tabIndex: hidden ? -1 : 0,
+                'aria-label': open ? 'Close menu' : 'Open menu',
+                'aria-expanded': open,
+                'aria-controls': 'site-menu',
+                'aria-hidden': hidden || undefined,
+                onClick: toggle,
+                onKeyDown: (event: React.KeyboardEvent) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggle();
+                  }
+                },
+              }}
+            />
+          );
+        })}
+      </div>
+    </>
   );
 }
 
-/** Un icono con animación de opacidad está oculto cuando su valor actual es 0. */
-function isHidden(step: { useOpacity?: boolean; opacity?: number; fromOpacity?: number } | undefined, open: boolean) {
-  if (!step?.useOpacity) return false;
-  const value = open ? (step.opacity ?? 100) : (step.fromOpacity ?? 100);
-  return value === 0;
+/**
+ * Coloca un bloque en su posición de apertura.
+ *
+ * El desplazamiento lo hace ahora el panel entero, así que los bloques de
+ * dentro se dibujan ya desplazados en lugar de animarse uno a uno.
+ */
+function shiftBlock(block: BlockData, dx: number): BlockData {
+  return {
+    ...block,
+    d: { ...block.d, x: block.d.x + dx },
+    m: { ...block.m, x: block.m.x + dx },
+  };
 }

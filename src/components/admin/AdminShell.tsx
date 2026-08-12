@@ -16,37 +16,48 @@ export function AdminShell({
   wide?: boolean;
 }) {
   return (
-    <div className="flex min-h-dvh">
-      <aside className="hidden w-56 shrink-0 border-r border-[var(--admin-border)] bg-[var(--admin-surface)] p-4 md:block">
-        <Link href="/admin" className="mb-6 block font-semibold tracking-tight">
-          Caroline Contreras
+    <div className="flex min-h-dvh flex-col lg:flex-row">
+      <aside className="shrink-0 border-b border-(--rule) px-6 py-6 lg:w-60 lg:border-r lg:border-b-0 lg:px-7">
+        <Link href="/admin" className="admin-display block text-[26px]">
+          Caroline
+          <br />
+          Contreras
         </Link>
-        <AdminNav />
-        <form action={signOutAction} className="mt-8">
-          <button type="submit" className="admin-btn w-full">
-            Cerrar sesión
-          </button>
-        </form>
-        <Link
-          href="/"
-          target="_blank"
-          className="mt-3 block text-center text-[12px] text-[var(--admin-muted)] underline underline-offset-2"
-        >
-          Ver el sitio
-        </Link>
+        <p className="admin-eyebrow mt-2">Content</p>
+
+        <div className="mt-7">
+          <AdminNav />
+        </div>
+
+        <div className="mt-9 flex items-center gap-4">
+          <form action={signOutAction}>
+            <button type="submit" className="admin-btn admin-btn--ghost">
+              Sign out
+            </button>
+          </form>
+          <Link href="/" target="_blank" className="admin-link text-[12px]">
+            View site
+          </Link>
+        </div>
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="flex flex-wrap items-center gap-3 border-b border-[var(--admin-border)] px-6 py-4">
+        <header className="flex flex-wrap items-end gap-4 border-b border-(--rule-strong) px-6 py-7 lg:px-10">
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-lg font-semibold tracking-tight">{title}</h1>
+            <h1 className="admin-display text-[34px]">{title}</h1>
             {description ? (
-              <p className="text-[13px] text-[var(--admin-muted)]">{description}</p>
+              <p className="admin-muted mt-1.5 max-w-prose">{description}</p>
             ) : null}
           </div>
           {actions}
         </header>
-        <main className={wide ? 'p-4' : 'mx-auto max-w-3xl p-6'}>{children}</main>
+        <main
+          className={
+            wide ? 'px-6 py-7 lg:px-10' : 'max-w-3xl px-6 py-7 lg:px-10'
+          }
+        >
+          {children}
+        </main>
       </div>
     </div>
   );

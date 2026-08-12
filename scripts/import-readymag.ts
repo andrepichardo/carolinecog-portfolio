@@ -298,8 +298,11 @@ async function main() {
   }
 
   for (const asset of assets.values()) {
+    const existing = await prisma.asset.findUnique({
+      where: { id: asset.id },
+      select: { pathname: true, alt: true },
+    });
     const data = {
-      url: asset.url,
       filename: asset.filename,
       mimeType: asset.mimeType,
       width: asset.width,
@@ -309,8 +312,11 @@ async function main() {
     };
     await prisma.asset.upsert({
       where: { id: asset.id },
-      create: { id: asset.id, ...data },
-      update: data,
+      create: { id: asset.id, url: asset.url, ...data },
+      // La URL solo se escribe si el asset sigue apuntando fuera. Un asset con
+      // `pathname` ya vive en nuestro almacenamiento, y sobreescribirlo con la
+      // del CDN de origen deshacía la migración cada vez que se reimportaba.
+      update: existing?.pathname ? data : { url: asset.url, ...data },
     });
   }
   log(`✓ ${assets.size} assets`);

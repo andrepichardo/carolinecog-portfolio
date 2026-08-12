@@ -19,6 +19,21 @@ const credentialsSchema = z.object({
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt' },
   pages: { signIn: '/admin/login' },
+  logger: {
+    error(error) {
+      // Una cookie de sesión que no se puede descifrar no es un fallo de la
+      // aplicación: pasa siempre que se rota AUTH_SECRET y el navegador
+      // conserva la sesión anterior. Auth.js ya trata al visitante como no
+      // autenticado, así que registrarlo como error solo genera ruido —y en
+      // desarrollo lo muestra como si algo se hubiera roto.
+      if (error.name === 'JWTSessionError') return;
+      console.error('[auth]', error);
+    },
+    warn(code) {
+      console.warn('[auth]', code);
+    },
+    debug() {},
+  },
   providers: [
     Credentials({
       credentials: {

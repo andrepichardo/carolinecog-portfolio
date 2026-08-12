@@ -11,8 +11,8 @@ export default async function TypographyPage() {
 
   return (
     <AdminShell
-      title="Tipografía"
-      description="Estilos compartidos. Cambiar uno afecta a todos los textos que lo usan."
+      title="Typography"
+      description="Shared styles. Changing one updates every piece of text that uses it."
     >
       <TypographyEditor styles={styles} />
     </AdminShell>

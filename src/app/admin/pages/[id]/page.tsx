@@ -27,10 +27,10 @@ export default async function PageEditorRoute({ params }: { params: Promise<{ id
     <AdminShell
       wide
       title={page.title}
-      description={`Lienzo de la página /${page.slug}`}
+      description={`Canvas for /${page.slug}`}
       actions={
         <Link href="/admin/pages" className="admin-btn">
-          Volver
+          Back
         </Link>
       }
     >

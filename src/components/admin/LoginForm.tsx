@@ -3,15 +3,21 @@
 import { useState, useTransition } from 'react';
 import { signInAction } from '@/lib/actions/auth';
 
-export function LoginForm({ next, initialError }: { next?: string; initialError?: string }) {
+export function LoginForm({
+  next,
+  initialError,
+}: {
+  next?: string;
+  initialError?: string;
+}) {
   const [error, setError] = useState<string | null>(
-    initialError ? 'No se pudo iniciar sesión. Revisa el correo y la contraseña.' : null
+    initialError ? 'Could not sign in. Check the email and password.' : null,
   );
   const [pending, startTransition] = useTransition();
 
   return (
     <form
-      className="admin-card flex flex-col gap-4"
+      className="flex flex-col gap-7"
       action={(formData) => {
         setError(null);
         startTransition(async () => {
@@ -24,7 +30,7 @@ export function LoginForm({ next, initialError }: { next?: string; initialError?
 
       <div>
         <label className="admin-label" htmlFor="email">
-          Correo
+          Email
         </label>
         <input
           className="admin-field"
@@ -39,7 +45,7 @@ export function LoginForm({ next, initialError }: { next?: string; initialError?
 
       <div>
         <label className="admin-label" htmlFor="password">
-          Contraseña
+          Password
         </label>
         <input
           className="admin-field"
@@ -52,13 +58,17 @@ export function LoginForm({ next, initialError }: { next?: string; initialError?
       </div>
 
       {error ? (
-        <p role="alert" className="text-[13px] text-[var(--admin-danger)]">
+        <p role="alert" className="text-[13px] text-(--danger)">
           {error}
         </p>
       ) : null}
 
-      <button className="admin-btn admin-btn--primary" type="submit" disabled={pending}>
-        {pending ? 'Entrando…' : 'Entrar'}
+      <button
+        className="admin-btn admin-btn--primary self-start"
+        type="submit"
+        disabled={pending}
+      >
+        {pending ? 'Signing in…' : 'Sign in'}
       </button>
     </form>
   );

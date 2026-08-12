@@ -20,14 +20,14 @@ interface Style {
   color: string;
 }
 
-const TOKENS = [
-  { value: 'SANS', label: 'DM Sans (original)' },
-  { value: 'GROTESK', label: 'Inter (sustituye a Aktiv Grotesk)' },
-  { value: 'DISPLAY', label: 'Instrument Serif (sustituye a Benton Modern)' },
-  { value: 'ROUND', label: 'Poppins (sustituye a All Round Gothic)' },
+const TOKENS: { value: FontToken; label: string }[] = [
+  { value: 'SANS', label: 'DM Sans — the original' },
+  { value: 'GROTESK', label: 'Inter — stands in for Aktiv Grotesk' },
+  { value: 'DISPLAY', label: 'Instrument Serif — stands in for Benton Modern' },
+  { value: 'ROUND', label: 'Poppins — stands in for All Round Gothic' },
 ];
 
-const FONT_VAR: Record<string, string> = {
+const FONT_VAR: Record<FontToken, string> = {
   SANS: 'var(--font-sans)',
   GROTESK: 'var(--font-grotesk)',
   DISPLAY: 'var(--font-display)',
@@ -36,14 +36,16 @@ const FONT_VAR: Record<string, string> = {
 
 export function TypographyEditor({ styles }: { styles: Style[] }) {
   return (
-    <div className="flex flex-col gap-3">
-      <p className="text-[13px] text-[var(--admin-muted)]">
-        Los tamaños están en unidades de diseño (1024 de ancho en escritorio), no en píxeles: el
-        sitio los escala solo según la pantalla.
+    <div>
+      <p className="admin-muted mb-6 max-w-prose">
+        Sizes are in design units — 1024 across on desktop — not pixels. The
+        site scales them to each screen on its own.
       </p>
-      {styles.map((style) => (
-        <StyleRow key={style.id} style={style} />
-      ))}
+      <div className="border-t border-(--rule-strong)">
+        {styles.map((style) => (
+          <StyleRow key={style.id} style={style} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -59,15 +61,15 @@ function StyleRow({ style }: { style: Style }) {
   };
 
   return (
-    <details className="admin-card">
-      <summary className="flex cursor-pointer items-center gap-3">
-        <span className="font-medium">{form.label}</span>
+    <details className="admin-fold border-b border-(--rule) py-3">
+      <summary>
+        <span className="min-w-0 flex-1 truncate">{form.label}</span>
         <span
-          className="ml-auto truncate text-[var(--admin-muted)]"
+          className="ml-auto truncate"
           style={{
             fontFamily: FONT_VAR[form.fontToken],
             fontWeight: form.fontWeight,
-            fontSize: Math.min(form.fontSize, 22),
+            fontSize: Math.min(form.fontSize, 24),
             letterSpacing: `${form.letterSpacing / 20}em`,
             textTransform: form.textTransform as never,
             color: form.color,
@@ -77,9 +79,9 @@ function StyleRow({ style }: { style: Style }) {
         </span>
       </summary>
 
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
         <label className="col-span-2 block sm:col-span-3">
-          <span className="admin-label">Nombre</span>
+          <span className="admin-label">Name</span>
           <input
             className="admin-field"
             value={form.label}
@@ -88,7 +90,7 @@ function StyleRow({ style }: { style: Style }) {
         </label>
 
         <label className="col-span-2 block sm:col-span-3">
-          <span className="admin-label">Familia</span>
+          <span className="admin-label">Typeface</span>
           <select
             className="admin-field"
             value={form.fontToken}
@@ -104,7 +106,7 @@ function StyleRow({ style }: { style: Style }) {
 
         {form.fontToken === 'SANS' ? (
           <label className="block">
-            <span className="admin-label">Tamaño óptico</span>
+            <span className="admin-label">Optical size</span>
             <select
               className="admin-field"
               value={form.fontOpticalSize ?? 14}
@@ -119,7 +121,7 @@ function StyleRow({ style }: { style: Style }) {
         ) : null}
 
         <label className="block">
-          <span className="admin-label">Grosor</span>
+          <span className="admin-label">Weight</span>
           <input
             className="admin-field"
             type="number"
@@ -131,7 +133,7 @@ function StyleRow({ style }: { style: Style }) {
           />
         </label>
         <label className="block">
-          <span className="admin-label">Cuerpo</span>
+          <span className="admin-label">Size</span>
           <input
             className="admin-field"
             type="number"
@@ -140,7 +142,7 @@ function StyleRow({ style }: { style: Style }) {
           />
         </label>
         <label className="block">
-          <span className="admin-label">Interlineado</span>
+          <span className="admin-label">Leading</span>
           <input
             className="admin-field"
             type="number"
@@ -159,33 +161,33 @@ function StyleRow({ style }: { style: Style }) {
           />
         </label>
         <label className="block">
-          <span className="admin-label">Caja</span>
+          <span className="admin-label">Case</span>
           <select
             className="admin-field"
             value={form.textTransform}
             onChange={(e) => set('textTransform', e.target.value)}
           >
             <option value="none">Normal</option>
-            <option value="uppercase">MAYÚSCULAS</option>
-            <option value="lowercase">minúsculas</option>
-            <option value="capitalize">Capitalizada</option>
+            <option value="uppercase">UPPERCASE</option>
+            <option value="lowercase">lowercase</option>
+            <option value="capitalize">Capitalised</option>
           </select>
         </label>
         <label className="block">
-          <span className="admin-label">Alineación</span>
+          <span className="admin-label">Align</span>
           <select
             className="admin-field"
             value={form.textAlign}
             onChange={(e) => set('textAlign', e.target.value)}
           >
-            <option value="left">Izquierda</option>
-            <option value="center">Centro</option>
-            <option value="right">Derecha</option>
-            <option value="justify">Justificado</option>
+            <option value="left">Left</option>
+            <option value="center">Centre</option>
+            <option value="right">Right</option>
+            <option value="justify">Justify</option>
           </select>
         </label>
         <label className="block">
-          <span className="admin-label">Color</span>
+          <span className="admin-label">Colour</span>
           <input
             className="admin-field"
             value={form.color}
@@ -194,7 +196,7 @@ function StyleRow({ style }: { style: Style }) {
         </label>
       </div>
 
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-4 flex items-center gap-4">
         <button
           type="button"
           className="admin-btn admin-btn--primary"
@@ -206,9 +208,9 @@ function StyleRow({ style }: { style: Style }) {
             })
           }
         >
-          {pending ? 'Guardando…' : 'Guardar'}
+          {pending ? 'Saving…' : 'Save'}
         </button>
-        {saved ? <span className="text-[13px] text-[var(--admin-muted)]">Guardado</span> : null}
+        {saved ? <span className="admin-eyebrow">Saved</span> : null}
       </div>
     </details>
   );
