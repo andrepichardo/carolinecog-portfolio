@@ -14,7 +14,7 @@ const credentialsSchema = z.object({
  *
  * Sesión por JWT en lugar de sesión en base de datos: el portafolio tiene un
  * único usuario, así que no compensa una consulta extra por petición. El hash
- * de la contraseña vive en la tabla User y lo crea `npm run db:seed`.
+ * de la contraseña vive en la tabla User y lo crea `yarn db:seed`.
  */
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt' },

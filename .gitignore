@@ -2,6 +2,13 @@
 /node_modules
 /.pnp
 .pnp.*
+yarn-error.log
+
+# El gestor del proyecto es yarn (ver "packageManager" en package.json).
+# Se ignora el lock de npm para que un `npm install` accidental no acabe
+# conviviendo con yarn.lock y produciendo árboles distintos.
+package-lock.json
+pnpm-lock.yaml
 
 # next
 /.next/

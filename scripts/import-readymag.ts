@@ -9,7 +9,7 @@
  * también hace que los disparadores de animación —que apuntan a IDs de widget—
  * sigan siendo válidos sin necesidad de una tabla de correspondencias.
  *
- *   npm run import:readymag
+ *   yarn import:readymag
  */
 
 import 'dotenv/config';
@@ -145,7 +145,7 @@ function buildAsset(url: string, hintW?: number, hintH?: number): AssetRecord {
   return {
     id: assetIdFor(filename),
     // Se conserva la URL original del CDN de Readymag hasta que
-    // `npm run assets:upload` los suba a Vercel Blob y reescriba estas URLs.
+    // `yarn assets:upload` los suba a Vercel Blob y reescriba estas URLs.
     url,
     filename,
     mimeType: MIME[ext] ?? 'application/octet-stream',

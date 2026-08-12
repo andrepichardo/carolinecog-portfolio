@@ -2,9 +2,9 @@
  * Crea el usuario administrador del CMS.
  *
  * El contenido del portafolio no se siembra aquí: lo importa
- * `npm run import:readymag` desde el volcado del proyecto original.
+ * `yarn import:readymag` desde el volcado del proyecto original.
  *
- *   npm run db:seed
+ *   yarn db:seed
  */
 
 import 'dotenv/config';

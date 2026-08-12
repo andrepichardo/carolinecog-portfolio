@@ -77,13 +77,18 @@ recuperar las tres familias de pago basta con crear un proyecto web en
 ## Puesta en marcha
 
 ```bash
-npm install
-cp .env.example .env      # rellenar DATABASE_URL, AUTH_SECRET y ADMIN_PASSWORD
-npx auth secret           # genera AUTH_SECRET
-npm run db:push           # crea las tablas
-npm run import:readymag   # importa el contenido original
-npm run db:seed           # crea el usuario del CMS
-npm run dev
+yarn install
+cp .env.example .env       # rellenar DATABASE_URL, AUTH_SECRET y ADMIN_PASSWORD
+yarn db:push               # crea las tablas
+yarn import:readymag       # importa el contenido original
+yarn db:seed               # crea el usuario del CMS
+yarn dev
+```
+
+Para generar `AUTH_SECRET` y una contraseña de administración:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 El CMS queda en `/admin`.
@@ -93,7 +98,7 @@ El CMS queda en `/admin`.
 Para trabajar sin configurar Neon:
 
 ```bash
-npm run db:local
+yarn db:local
 ```
 
 Levanta un Postgres embebido (`prisma dev`), sincroniza el schema, importa el
@@ -101,14 +106,14 @@ contenido y crea el usuario. Escribe la `DATABASE_URL` en `.env`.
 
 > Ese Postgres embebido solo acepta unas seis conexiones simultáneas y se
 > degrada tras un uso intenso. Si aparece «Server has closed the connection» o
-> «Connection terminated unexpectedly», vuelve a ejecutar `npm run db:local`.
+> «Connection terminated unexpectedly», vuelve a ejecutar `yarn db:local`.
 >
 > Si se cae con frecuencia, arráncalo en una terminal propia y déjalo abierto —
 > en segundo plano no siempre sobrevive al proceso que lo lanzó:
 >
 > ```bash
-> npx prisma dev --name carolinecog   # dejar corriendo
-> npm run db:local                     # en otra terminal
+> yarn prisma dev --name carolinecog   # dejar corriendo
+> yarn db:local                        # en otra terminal
 > ```
 >
 > Nada de esto aplica con Neon.
@@ -117,15 +122,16 @@ contenido y crea el usuario. Escribe la `DATABASE_URL` en `.env`.
 
 | Comando | Qué hace |
 | --- | --- |
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Compila y prerenderiza las páginas públicas |
-| `npm run typecheck` | Comprueba tipos |
-| `npm run db:push` | Sincroniza el schema con la base de datos |
-| `npm run db:studio` | Explorador de datos de Prisma |
-| `npm run db:local` | Base de datos local de desarrollo (ver arriba) |
-| `npm run import:readymag` | Reimporta el contenido desde `_reference/` |
-| `npm run db:seed` | Crea o actualiza el usuario del CMS |
-| `npm run assets:upload` | Migra las imágenes del CDN de Readymag a Vercel Blob |
+| `yarn dev` | Servidor de desarrollo |
+| `yarn build` | Compila y prerenderiza las páginas públicas |
+| `yarn typecheck` | Comprueba tipos |
+| `yarn db:push` | Sincroniza el schema con la base de datos |
+| `yarn db:studio` | Explorador de datos de Prisma |
+| `yarn db:local` | Base de datos local de desarrollo (ver arriba) |
+| `yarn import:readymag` | Reimporta el contenido desde `_reference/` |
+| `yarn db:seed` | Crea o actualiza el usuario del CMS |
+| `yarn assets:upload` | Migra a Vercel Blob las imágenes que sigan fuera |
+| `yarn favicon` | Regenera `src/app/icon.svg` desde el wordmark |
 
 ## El CMS
 
@@ -166,28 +172,39 @@ bloque, así que se puede volver a ejecutar sin duplicar nada.
 
 ## Despliegue en Vercel
 
-1. Crear una base en [Neon](https://console.neon.tech) y copiar las dos cadenas
-   de conexión (la *pooled* y la directa).
-2. Importar el repositorio en Vercel.
-3. Variables de entorno del proyecto:
-   - `DATABASE_URL` — cadena *pooled* de Neon
-   - `DIRECT_URL` — cadena directa (la usan las migraciones)
-   - `AUTH_SECRET` — `npx auth secret`
-   - `ADMIN_EMAIL` y `ADMIN_PASSWORD`
-   - `NEXT_PUBLIC_SITE_URL` — el dominio final
-   - `NEXT_PUBLIC_ADOBE_FONTS_KIT` — opcional
-4. Storage → Blob → conectar al proyecto (inyecta `BLOB_READ_WRITE_TOKEN`).
-5. Desde local, apuntando `.env` a Neon:
-   ```bash
-   npm run db:push
-   npm run import:readymag
-   npm run db:seed
-   npm run assets:upload
-   ```
-6. Desplegar.
+La base de datos y el almacenamiento **ya están aprovisionados**: Neon tiene el
+schema y el contenido, y las 40 imágenes están en un store público de Vercel
+Blob (`carolinecog-portfolio-blob`, región `iad1`). Ya no queda nada apuntando
+al CDN de Readymag.
 
-Cuando ya no quede ninguna imagen apuntando a `rmcdn.net`, se pueden quitar esos
-dominios de `images.remotePatterns` en `next.config.ts`.
+Para desplegar:
+
+1. Importar el repositorio en [vercel.com/new](https://vercel.com/new).
+2. Añadir las variables de entorno del proyecto (las mismas del `.env` local):
+   - `DATABASE_URL` — cadena *pooled* de Neon
+   - `DIRECT_URL` — cadena directa, sin `-pooler` (la usan las migraciones)
+   - `AUTH_SECRET`
+   - `ADMIN_EMAIL` y `ADMIN_PASSWORD`
+   - `NEXT_PUBLIC_SITE_URL` — el dominio final; afecta al sitemap, a robots.txt
+     y a las etiquetas Open Graph
+   - `NEXT_PUBLIC_ADOBE_FONTS_KIT` — opcional
+3. `BLOB_READ_WRITE_TOKEN` y `BLOB_STORE_ID` los inyecta Vercel al tener el
+   store conectado; no hay que añadirlos a mano.
+4. Desplegar.
+
+### Si hubiera que rehacer la base desde cero
+
+Con `.env` apuntando a Neon:
+
+```bash
+yarn db:push               # schema
+yarn import:readymag       # contenido desde _reference/
+yarn db:seed               # usuario del CMS
+yarn assets:upload         # imágenes a Blob (solo las que sigan fuera)
+```
+
+`assets:upload` es incremental: solo toca los assets que aún no tienen
+`pathname`, así que volver a ejecutarlo no duplica nada.
 
 ## `_reference/`
 

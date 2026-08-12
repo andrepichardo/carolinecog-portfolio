@@ -28,7 +28,7 @@ function createClient() {
   if (!connectionString) {
     throw new Error(
       'Falta DATABASE_URL. Copia .env.example a .env y pega la cadena de conexión de Neon,\n' +
-        'o levanta una base local con: npx prisma dev --name carolinecog'
+        'o levanta una base local con: yarn db:local'
     );
   }
   return new PrismaClient({

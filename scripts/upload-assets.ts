@@ -9,7 +9,7 @@
  * Prefiere el archivo local de _reference/assets (es el original sin recomprimir)
  * y solo descarga del CDN si no está.
  *
- *   npm run assets:upload
+ *   yarn assets:upload
  */
 
 import 'dotenv/config';

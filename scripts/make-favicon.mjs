@@ -5,7 +5,7 @@
  * recorta a sus dos primeras letras. No se puede aislar solo la "C": en este
  * tipo la "a" va encajada dentro de su abertura y ambas forman un único trazado.
  *
- *   node scripts/make-favicon.mjs
+ *   yarn favicon
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
