@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Caroline Contreras">
   <defs>
     <clipPath id="crop">
-      <rect x="95.23" y="66.56" width="321.55" height="378.88"/>
+      <rect x="74.33" y="71.68" width="363.34" height="368.64"/>
     </clipPath>
   </defs>
   <rect width="512" height="512" fill="#efefef"/>
   <g clip-path="url(#crop)">
-    <g transform="translate(102.70 81.52) scale(2.49263)">
+    <g transform="translate(74.33 69.03) scale(2.65209)">
       <defs>
       <style>
       .cls-1 {

@@ -20,9 +20,17 @@ const SOURCE = join(
 const OUTPUT = join(process.cwd(), 'src', 'app', 'icon.svg');
 
 // Región del wordmark que se conserva, en unidades de su viewBox (1011.9 × 140.19).
-const CROP = { x: -3, y: -6, width: 129, height: 152 };
+//
+// Medido sobre el trazado real, no estimado: la "C" ocupa x 0–78, la "a" llega
+// hasta x≈137 contando su serifa, y la "r" arranca en x≈140, así que el corte
+// cae en la holgura entre ambas. En vertical la tinta va de y≈1 a y≈140.
+//
+// El recorte coincide con la caja de tinta a propósito: el centrado lo hace
+// después el cálculo del margen, y cualquier holgura sobrante aquí
+// descentraría el glifo dentro del icono.
+const CROP = { x: 0, y: 1, width: 137, height: 139 };
 const SIZE = 512;
-const PADDING = 0.13;
+const PADDING = 0.14;
 const BACKGROUND = '#efefef';
 
 const source = readFileSync(SOURCE, 'utf8');
