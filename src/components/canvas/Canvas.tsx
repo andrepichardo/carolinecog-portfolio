@@ -17,6 +17,13 @@ interface CanvasProps {
  * móvil) y globals.css lo convierte a píxeles reales mediante `--u`. No hay
  * medición en JavaScript: el escalado es CSS puro, así que no hay salto entre
  * el HTML servido y la hidratación.
+ *
+ * Los bloques anclados al viewport se dibujan aquí dentro junto al resto, no en
+ * una capa aparte: su z-index de diseño los ordena contra el contenido de la
+ * página, y en el original hay casos que dependen de ello —en la portada, el
+ * texto de presentación va anclado con z 301 y las fotos de proyecto, con 302 a
+ * 305, pasan por encima al hacer scroll—. `isolation` mantiene esos números
+ * dentro de la página, para que no compitan con el menú.
  */
 export function Canvas({ heightDesktop, heightMobile, blocks, textStyles }: CanvasProps) {
   const style = {
@@ -24,28 +31,14 @@ export function Canvas({ heightDesktop, heightMobile, blocks, textStyles }: Canv
     '--rm-mh': heightMobile,
   } as CSSProperties;
 
-  // Los bloques anclados al viewport se sacan a una capa propia para que el
-  // `overflow: hidden` del lienzo no los recorte al hacer scroll.
-  const pinned = blocks.filter((b) => b.d.fixed || b.m.fixed);
-  const flowing = blocks.filter((b) => !b.d.fixed && !b.m.fixed);
-
   return (
-    <>
-      <div className="rm-stage">
-        <div className="rm-canvas" style={style}>
-          <HoverStyles blocks={flowing} />
-          {flowing.map((block) => (
-            <BlockView key={block.id} block={block} textStyles={textStyles} />
-          ))}
-        </div>
+    <div className="rm-stage">
+      <div className="rm-canvas" style={style}>
+        <HoverStyles blocks={blocks} />
+        {blocks.map((block) => (
+          <BlockView key={block.id} block={block} textStyles={textStyles} />
+        ))}
       </div>
-      {pinned.length > 0 && (
-        <div className="rm-fixed-layer">
-          {pinned.map((block) => (
-            <BlockView key={block.id} block={block} textStyles={textStyles} />
-          ))}
-        </div>
-      )}
-    </>
+    </div>
   );
 }

@@ -38,20 +38,60 @@ original.
 visor de Readymag), los assets y capturas de referencia. La comparación se hizo
 emparejando cada bloque con su widget original por id y midiendo su rectángulo:
 
-- **Escritorio**: 123 bloques comparados, 0 diferencias por encima de 1 px.
-- **Móvil**: 120 bloques comparados, coincidencia salvo el botón del menú
-  (ver «Diferencias intencionadas»).
+- **Escritorio**: 111 bloques comparados, 12 fuera de ±2 px — exactamente los
+  dos elementos de cabecera de cada página, reposicionados a propósito. Todo el
+  contenido coincide.
+- **Móvil**: 108 bloques, 19 fuera de ±2 px: los 15 de cabecera (wordmark y
+  botón del menú), más los 4 de la sección de formación y experiencia de
+  `/about`. Todos están en «Diferencias intencionadas».
 - **Animaciones**: el desplazamiento del wordmark al hacer scroll reproduce la
   curva medida (ease-in-out cuadrático sobre un recorrido de 169,4 px), y el
   menú y los hover coinciden con el original.
 
+### El container
+
+Todo el portafolio se compone dentro de una columna de ancho fijo, centrada:
+
+| | Escritorio | Móvil |
+| --- | --- | --- |
+| Ancho | 1024 unidades | 320 |
+| Margen lateral | 48 | 20 |
+| Franja de cabecera | 72 de alto | 50 |
+
+El wordmark y el botón del menú se anclan **al container y a la parte superior
+de la ventana**, alineados entre sí en la franja de cabecera. En el original se
+anclan al centro del viewport, con lo que su altura depende de lo alta que sea
+la pantalla: medido sobre el sitio real, el logo de `/norologio` cae en y = −15
+—fuera de cuadro— con una ventana de 700 px y en y = 235, encima del contenido,
+con una de 1200. Aquí queda a 19 px sea cual sea la altura.
+
+En la portada el wordmark sigue entrando grande y encogiendo con el scroll hasta
+posarse exactamente en esa franja. En el resto de páginas ya nace ahí; la
+animación se retira porque no aportaba nada y en `/contact` —que no llega a
+desplazarse— dejaba el logo a media altura sobre el texto para siempre.
+
+El editor del CMS dibuja estas guías sobre el lienzo (bordes, márgenes y eje
+central, más la franja de cabecera sombreada), ofrece alineación a izquierda,
+centro, derecha y ancho completo, y al arrastrar engancha a esas líneas.
+
 ### Diferencias intencionadas
 
+- **Cabecera**: anclada al container y a la parte superior, en lugar de flotar
+  con el centro de la ventana (ver arriba).
+- **Menú**: el panel ocupa la ventana entera. El del original es un rectángulo
+  de tamaño fijo que en pantallas anchas no llega a cubrirla y que, cerrado,
+  deja asomar sus enlaces por el borde derecho.
+- **`/about` en móvil**: el original trae dos fallos que solo se ven en la
+  versión de teléfono y aquí están corregidos (`fixAboutMobile()` en el
+  importador). Primero, los rótulos estaban cruzados: «Education» encabezaba los
+  empleos y «Experience» los títulos, al revés que en escritorio. Segundo, había
+  178 unidades en blanco entre el último párrafo y la primera sección, más del
+  triple de la separación que la propia página usa entre secciones; todo lo que
+  va debajo sube 118 unidades y el alto de la página móvil pasa de 1267 a 1149.
 - **Botón del menú en móvil**: el original lo coloca en coordenadas sin escalar,
   de modo que solo queda bien alineado en pantallas de exactamente 320 px; en
   cualquier móvil actual aparece separado del borde. Aquí escala como el resto
-  del lienzo. Si se prefiere replicar el comportamiento original, basta con
-  quitar el escalado de ese bloque.
+  del lienzo.
 - **Tipografía**: ver más abajo.
 
 ## Tipografía
@@ -141,7 +181,9 @@ En `/admin`:
   dentro de un iframe, así que lo que se ve es exactamente lo que se publica.
   Los bloques se arrastran, se redimensionan y se ajustan con las flechas
   (Mayús = 10 unidades). Escritorio y móvil se editan por separado. El panel de
-  capas permite seleccionar bloques tapados por otros.
+  capas permite seleccionar bloques tapados por otros. `Ctrl+Z` deshace y
+  `Ctrl+Mayús+Z` rehace: un arrastre entero cuenta como un solo paso, igual que
+  una ráfaga de flechas sobre el mismo bloque.
 - **Proyectos** — ficha técnica (cliente, año, supervisión), orden y proyecto
   siguiente.
 - **Imágenes** — biblioteca compartida, con subida a Vercel Blob y texto

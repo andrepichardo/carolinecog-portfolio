@@ -184,6 +184,39 @@ function decodeInlineRanges(
 }
 
 /**
+ * Normaliza los saltos de línea y devuelve la correspondencia de posiciones.
+ *
+ * Readymag separa los párrafos dentro de un mismo bloque con `\r\r\n`: el
+ * editor inserta un salto blando y a continuación el salto real, de modo que
+ * queda una línea en blanco entre ambos. Al escribir esa cadena tal cual en el
+ * HTML, el parser normaliza CR y CRLF a un único LF y los dos saltos se funden
+ * en uno solo, así que la línea en blanco desaparecía.
+ *
+ * Aquí se convierten CRLF y CR sueltos a LF —`\r\r\n` pasa a `\n\n`— y se
+ * devuelve `map`, que traduce cada posición del texto original a la del texto
+ * ya normalizado. Hace falta porque los rangos de formato y de enlace vienen
+ * en coordenadas del texto original y se descolocarían al acortarlo.
+ */
+function normalizeBreaks(text: string): { text: string; map: (i: number) => number } {
+  const positions = new Array<number>(text.length + 1);
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    positions[i] = out.length;
+    if (text[i] === '\r') {
+      out += '\n';
+      // El LF de un CRLF se consume con el CR: ambos apuntan al mismo salto.
+      if (text[i + 1] === '\n') positions[++i] = out.length - 1;
+      continue;
+    }
+    out += text[i];
+  }
+  positions[text.length] = out.length;
+
+  const map = (i: number) => positions[Math.max(0, Math.min(i, text.length))];
+  return { text: out, map };
+}
+
+/**
  * Funde los rangos de formato con los de enlace.
  *
  * Ambos son intervalos independientes que pueden solaparse parcialmente, así
@@ -196,9 +229,15 @@ function buildRuns(
   entityRanges: { offset: number; length: number; key: number }[] | undefined,
   entityMap: Record<string, { type: string; data?: Record<string, unknown> }> | undefined,
   linkStyleKeys: Map<string, string>,
-  pageSlugById: Map<string, string>
+  pageSlugById: Map<string, string>,
+  /** Traduce posiciones del texto original al ya normalizado. */
+  map: (i: number) => number
 ): TextRun[] {
-  const styleRanges = decodeInlineRanges(inline);
+  const styleRanges = decodeInlineRanges(inline).map((r) => ({
+    ...r,
+    start: map(r.start),
+    end: map(r.end),
+  }));
   const linkRanges = (entityRanges ?? []).flatMap((r) => {
     const entity = entityMap?.[String(r.key)];
     if (!entity || entity.type !== 'LINK') return [];
@@ -210,8 +249,8 @@ function buildRuns(
     const pageSlug = data.pageId ? pageSlugById.get(data.pageId) : undefined;
     return [
       {
-        start: r.offset,
-        end: r.offset + r.length,
+        start: map(r.offset),
+        end: map(r.offset + r.length),
         link: {
           kind: kind as 'URL' | 'EMAIL' | 'PAGE',
           url: data.url,
@@ -250,6 +289,44 @@ function buildRuns(
   return runs;
 }
 
+/**
+ * Sube al párrafo el formato que comparten todos sus tramos.
+ *
+ * Readymag guarda como formato inline cosas que en realidad valen para el
+ * párrafo entero. El caso que lo hace necesario es el cuerpo de la portada en
+ * móvil: el tamaño (12) viene como un tramo que cubre todo el texto, así que el
+ * `<p>` se quedaba con los 40 del estilo de escritorio y el interlineado se
+ * calculaba contra un cuerpo que no era el que se veía.
+ *
+ * Solo se sube lo que es idéntico en todos los tramos y cuando estos cubren el
+ * texto completo; cualquier tramo que se desvíe conserva su valor.
+ */
+function hoistUniformRuns(paragraph: Paragraph, runs: TextRun[], length: number) {
+  if (!runs.length || length === 0) return;
+
+  const covered = runs.reduce((sum, r) => sum + r.length, 0) >= length;
+  if (!covered) return;
+
+  const keys = [
+    'fontSize',
+    'letterSpacing',
+    'fontWeight',
+    'fontStyle',
+    'color',
+    'textTransform',
+    'fontToken',
+    'fontOpticalSize',
+  ] as const;
+
+  for (const key of keys) {
+    const first = runs[0][key];
+    if (first === undefined) continue;
+    if (!runs.every((r) => r[key] === first)) continue;
+    (paragraph as unknown as Record<string, unknown>)[key] = first;
+    for (const run of runs) delete run[key];
+  }
+}
+
 export function convertText(
   source: { blocks?: unknown; styles?: unknown; blocksMeta?: unknown; entityMap?: unknown },
   styleKeys: Map<string, string>,
@@ -281,18 +358,22 @@ export function convertText(
   const paragraphs: Paragraph[] = blocks.map((block) => {
     const style = styles.find((s) => s.key === block.key);
     const meta = metas.find((m) => m.key === block.key);
+    const { text, map } = normalizeBreaks(block.text);
     const runs = buildRuns(
-      block.text,
+      text,
       style?.inlineStyles,
       block.entityRanges,
       entityMap,
       linkStyleKeys,
-      pageSlugById
+      pageSlugById,
+      map
     );
 
-    const paragraph: Paragraph = { text: block.text };
+    const paragraph: Paragraph = { text };
     const named = meta?.data?.textStyle;
     if (named) paragraph.styleKey = styleKeys.get(named) ?? null;
+    hoistUniformRuns(paragraph, runs, text.length);
+
     if (meta?.data?.lineHeight) paragraph.lineHeight = meta.data.lineHeight;
     // Readymag separa párrafos con un padding explícito por bloque, no con un
     // margen uniforme: hay listas donde solo algunas líneas llevan aire.
@@ -324,11 +405,16 @@ export function convertImage(
   const cropH = src.cropH ?? widget.cropH;
   const originalW = widget.originalW;
   const originalH = widget.originalH;
-  const scale = src.scale ?? widget.scale;
+  const width = viewport?.w ?? widget.w;
 
   const content: ImageContent = {};
 
+  // Los SVG se incrustan enteros y escalan solos; aplicarles un recorte solo
+  // introduciría un encuadre que no les corresponde.
+  const isSvg = (viewport?.picture ?? widget.picture)?.type === 'svg';
+
   if (
+    !isSvg &&
     cropX !== undefined &&
     cropY !== undefined &&
     cropW !== undefined &&
@@ -338,10 +424,15 @@ export function convertImage(
   ) {
     content.crop = { x: cropX, y: cropY, w: cropW, h: cropH };
     content.original = { w: originalW, h: originalH };
-    // `scale` = unidades de diseño por píxel original. Cuando falta se deriva
-    // del ancho del bloque, que es la definición que usa el original.
-    const width = viewport?.w ?? widget.w;
-    content.scale = scale ?? (width && cropW ? width / cropW : 1);
+    // `scale` = unidades de diseño por píxel original.
+    //
+    // Se deriva del ancho del bloque en lugar de leer el `scale` del widget: por
+    // definición el recorte tiene que llenar el bloque exactamente, y el valor
+    // guardado no siempre lo cumple. En el viewport móvil de las miniaturas de
+    // proyecto viene con la escala de escritorio, lo que ampliaba la foto unas
+    // dos veces y media y dejaba ver solo un fragmento.
+    const derived = width && cropW ? width / cropW : undefined;
+    content.scale = derived ?? src.scale ?? widget.scale ?? 1;
   }
 
   const independent = widget.border_radius_independent;

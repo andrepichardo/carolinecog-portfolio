@@ -86,6 +86,7 @@ function Field({
 export function BlockInspector({
   block,
   viewport,
+  container,
   assets,
   pages,
   textStyles,
@@ -97,6 +98,7 @@ export function BlockInspector({
 }: {
   block: EditorBlock | null;
   viewport: 'desktop' | 'mobile';
+  container: { width: number; gutter: number };
   assets: EditorAsset[];
   pages: { id: string; title: string; slug: string }[];
   textStyles: { key: string; label: string }[];
@@ -113,6 +115,7 @@ export function BlockInspector({
         <BlockForm
           block={block}
           viewport={viewport}
+          container={container}
           assets={assets}
           pages={pages}
           textStyles={textStyles}
@@ -227,6 +230,7 @@ function PageSettings({
 function BlockForm({
   block,
   viewport,
+  container,
   assets,
   pages,
   textStyles,
@@ -236,6 +240,7 @@ function BlockForm({
 }: {
   block: EditorBlock;
   viewport: 'desktop' | 'mobile';
+  container: { width: number; gutter: number };
   assets: EditorAsset[];
   pages: { id: string; title: string; slug: string }[];
   textStyles: { key: string; label: string }[];
@@ -294,6 +299,7 @@ function BlockForm({
 
   const isDesktop = viewport === 'desktop';
   const num = (v: number | null) => (v === null ? '' : String(v));
+  const round = (n: number) => Math.round(n * 100) / 100;
   const kindLabel =
     block.kind === 'TEXT' ? 'Text' : block.kind === 'IMAGE' ? 'Image' : 'Shape';
 
@@ -340,6 +346,50 @@ function BlockForm({
               );
             })}
           </div>
+        </div>
+
+        <div>
+          <p className="admin-label">Align within the container</p>
+          <div className="editor-align">
+            {(
+              [
+                ['Left', 'left'],
+                ['Centre', 'center'],
+                ['Right', 'right'],
+                ['Full width', 'full'],
+              ] as const
+            ).map(([label, mode]) => (
+              <button
+                key={mode}
+                type="button"
+                className="admin-btn"
+                onClick={() => {
+                  const w = (isDesktop ? form.dW : form.mW) ?? 0;
+                  const inner = container.width - container.gutter * 2;
+                  const next =
+                    mode === 'left'
+                      ? { x: container.gutter, w }
+                      : mode === 'right'
+                        ? { x: container.width - container.gutter - w, w }
+                        : mode === 'center'
+                          ? { x: (container.width - w) / 2, w }
+                          : { x: container.gutter, w: inner };
+                  setForm({
+                    ...form,
+                    ...(isDesktop
+                      ? { dX: round(next.x), dW: round(next.w) }
+                      : { mX: round(next.x), mW: round(next.w) }),
+                  });
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="admin-muted mt-2 text-[11px]">
+            The container is {container.width} units wide with a {container.gutter}-unit margin.
+            Dragging snaps to those edges and to the centre line.
+          </p>
         </div>
 
         <div className="grid grid-cols-3 gap-3">

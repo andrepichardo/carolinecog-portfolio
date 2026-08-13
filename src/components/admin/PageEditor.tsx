@@ -41,6 +41,19 @@ const FRAME_WIDTH: Record<Viewport, number> = { desktop: 1024, mobile: 390 };
 /** Design units the canvas is laid out in, per viewport. */
 const DESIGN_WIDTH: Record<Viewport, number> = { desktop: 1024, mobile: 320 };
 
+/**
+ * The portfolio's container, in design units. Mirrors globals.css.
+ * `chrome` is the strip the wordmark and the menu button occupy — anything
+ * placed inside it will end up behind them.
+ */
+const CONTAINER: Record<Viewport, { gutter: number; chrome: number }> = {
+  desktop: { gutter: 48, chrome: 72 },
+  mobile: { gutter: 20, chrome: 50 },
+};
+
+/** How close, in design units, a dragged edge has to be for it to snap. */
+const SNAP = 6;
+
 /** Readable label for a block that has no name of its own. */
 function describe(block: EditorBlock): string {
   if (block.kind === 'TEXT') {
@@ -82,7 +95,6 @@ export function PageEditor({
   const stageRef = useRef<HTMLDivElement>(null);
   const [stageWidth, setStageWidth] = useState(0);
 
-  useEffect(() => setBlocks(initialBlocks), [initialBlocks]);
 
   useEffect(() => {
     const el = stageRef.current;
@@ -105,6 +117,16 @@ export function PageEditor({
   const zoom = stageWidth > 0 ? Math.min(1, stageWidth / frameWidth) : 1;
 
   const selected = blocks.find((b) => b.id === selectedId) ?? null;
+
+  const box = CONTAINER[viewport];
+  /** Vertical lines worth snapping to: margins and the centre of the column. */
+  const guides = useMemo(
+    () => [box.gutter, designWidth / 2, designWidth - box.gutter],
+    [box.gutter, designWidth]
+  );
+
+  const guidesRef = useRef(guides);
+  guidesRef.current = guides;
 
   const geometryOf = useCallback(
     (block: EditorBlock) =>
@@ -172,8 +194,62 @@ export function PageEditor({
     blocksRef.current = blocks;
   }, [blocks]);
 
+  // --- undo history ---------------------------------------------------------
+  //
+  // Snapshots are cheap: every update replaces the array and the dirty set
+  // instead of mutating them, so keeping a reference is keeping a full copy.
+  //
+  // What counts as one step is the interesting part. A drag fires dozens of
+  // updates and a held arrow key fires one every few milliseconds; recording
+  // each of them would make undo useless. So a snapshot is taken when an
+  // interaction *starts* and skipped while it continues — a drag is one step,
+  // and consecutive tweaks to the same block within a short pause are folded
+  // into that same step.
+  const dirtyRef = useRef(dirty);
+  useEffect(() => {
+    dirtyRef.current = dirty;
+  }, [dirty]);
+
+  type Snapshot = { blocks: EditorBlock[]; dirty: Set<string> };
+  const pastRef = useRef<Snapshot[]>([]);
+  const futureRef = useRef<Snapshot[]>([]);
+  const [history, setHistory] = useState({ past: 0, future: 0 });
+  const syncHistoryCount = () =>
+    setHistory({ past: pastRef.current.length, future: futureRef.current.length });
+
+  const pushHistory = useCallback(() => {
+    pastRef.current.push({ blocks: blocksRef.current, dirty: dirtyRef.current });
+    if (pastRef.current.length > 100) pastRef.current.shift();
+    futureRef.current = [];
+    syncHistoryCount();
+  }, []);
+
+  // A fresh list from the server replaces everything, so the history it was
+  // built on no longer describes anything that exists.
+  useEffect(() => {
+    setBlocks(initialBlocks);
+    blocksRef.current = initialBlocks;
+    pastRef.current = [];
+    futureRef.current = [];
+    setHistory({ past: 0, future: 0 });
+  }, [initialBlocks]);
+
+  // Marks the last block touched and when, to tell a continuing gesture from a
+  // new one.
+  const lastTouchRef = useRef<{ id: string; at: number } | null>(null);
+  const COALESCE_MS = 600;
+
   const patchGeometry = useCallback(
     (id: string, patch: { x?: number; y?: number; w?: number; h?: number }) => {
+      const now = Date.now();
+      const last = lastTouchRef.current;
+      const continuing =
+        // mid-drag: the snapshot was already taken in `startDrag`
+        dragRef.current?.id === id ||
+        (last?.id === id && now - last.at < COALESCE_MS);
+      lastTouchRef.current = { id, at: now };
+      if (!continuing) pushHistory();
+
       const round = (n: number) => Math.round(n * 100) / 100;
       const current = blocksRef.current;
       const index = current.findIndex((b) => b.id === id);
@@ -203,9 +279,14 @@ export function PageEditor({
 
       syncPreview([merged]);
       setBlocks(next);
-      setDirty((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
+      setDirty((prev) => {
+        if (prev.has(id)) return prev;
+        const merged = new Set(prev).add(id);
+        dirtyRef.current = merged;
+        return merged;
+      });
     },
-    [viewport, syncPreview],
+    [viewport, syncPreview, pushHistory],
   );
 
   // --- dragging and resizing -----------------------------------------------
@@ -278,6 +359,10 @@ export function PageEditor({
     event.preventDefault();
     event.stopPropagation();
     setSelectedId(block.id);
+    // Taken before the first movement so undo returns the block to where the
+    // gesture began, not to where it was one frame ago.
+    pushHistory();
+    lastTouchRef.current = { id: block.id, at: Date.now() };
     const g = geometryOf(block);
     dragRef.current = {
       id: block.id,
@@ -288,9 +373,37 @@ export function PageEditor({
     };
   };
 
-  // Arrow keys for pixel-level nudging without a mouse.
+  /**
+   * Moves one step through the history.
+   *
+   * The whole block list is pushed to the preview rather than just what
+   * changed: after an undo the iframe still carries the CSS variables written
+   * during the move, and the only way to be sure none survives is to rewrite
+   * them all.
+   */
+  const travel = useCallback(
+    (direction: 'undo' | 'redo') => {
+      const from = direction === 'undo' ? pastRef.current : futureRef.current;
+      const to = direction === 'undo' ? futureRef.current : pastRef.current;
+      const entry = from.pop();
+      if (!entry) return;
+
+      to.push({ blocks: blocksRef.current, dirty: dirtyRef.current });
+      blocksRef.current = entry.blocks;
+      dirtyRef.current = entry.dirty;
+      setBlocks(entry.blocks);
+      setDirty(entry.dirty);
+      syncPreview(entry.blocks);
+      // A restored state must not be folded into the step that follows it.
+      lastTouchRef.current = null;
+      syncHistoryCount();
+      setMessage(direction === 'undo' ? 'Undone' : 'Redone');
+    },
+    [syncPreview],
+  );
+
+  // Arrow keys for pixel-level nudging without a mouse, and undo/redo.
   useEffect(() => {
-    if (!selectedId) return;
     const onKey = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
       if (
@@ -299,6 +412,20 @@ export function PageEditor({
       ) {
         return;
       }
+
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        travel(event.shiftKey ? 'redo' : 'undo');
+        return;
+      }
+      // Windows keyboards also send Ctrl+Y for redo.
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y') {
+        event.preventDefault();
+        travel('redo');
+        return;
+      }
+
+      if (!selectedId) return;
       const step = event.shiftKey ? 10 : 1;
       const deltas: Record<string, [number, number]> = {
         ArrowLeft: [-step, 0],
@@ -316,7 +443,7 @@ export function PageEditor({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selectedId, blocks, geometryOf, patchGeometry]);
+  }, [selectedId, blocks, geometryOf, patchGeometry, travel]);
 
   // --- saving ---------------------------------------------------------------
   const saveGeometry = () => {
@@ -410,6 +537,24 @@ export function PageEditor({
             ))}
             <button
               type="button"
+              className="admin-btn"
+              onClick={() => travel('undo')}
+              disabled={history.past === 0}
+              title="Undo (Ctrl+Z)"
+            >
+              Undo
+            </button>
+            <button
+              type="button"
+              className="admin-btn"
+              onClick={() => travel('redo')}
+              disabled={history.future === 0}
+              title="Redo (Ctrl+Shift+Z)"
+            >
+              Redo
+            </button>
+            <button
+              type="button"
               className="admin-btn admin-btn--primary"
               onClick={saveGeometry}
               disabled={pending || dirty.size === 0}
@@ -454,6 +599,25 @@ export function PageEditor({
                 className="pointer-events-none block border-0"
               />
 
+              <div className="editor-guides">
+                <div
+                  className="editor-chrome-zone"
+                  style={{ height: box.chrome * unit }}
+                  title="Header strip — the wordmark and menu button sit here"
+                />
+                {[0, box.gutter, designWidth / 2, designWidth - box.gutter, designWidth].map(
+                  (x, i) => (
+                    <div
+                      key={x}
+                      className={`editor-guide${
+                        i === 0 || i === 4 ? ' editor-guide--edge' : ''
+                      }${i === 2 ? ' editor-guide--center' : ''}`}
+                      style={{ left: x * unit }}
+                    />
+                  )
+                )}
+              </div>
+
               <div className="absolute inset-0">
                 {blocks.map((block) => {
                   const g = geometryOf(block);
@@ -469,6 +633,12 @@ export function PageEditor({
                       data-id={block.id}
                       data-selected={selectedId === block.id}
                       data-pinned={pinned || undefined}
+                      // El diseño lleva algunas imágenes hasta el borde del
+                      // lienzo a propósito, así que solo se avisa de lo que se
+                      // sale de él, no de lo que rebasa el margen.
+                      data-outside={
+                        !pinned && (g.x < -1 || g.x + g.w > designWidth + 1) ? 'true' : undefined
+                      }
                       style={{
                         left: g.x * unit,
                         top: g.y * unit,
@@ -556,6 +726,7 @@ export function PageEditor({
           key={selected?.id ?? 'none'}
           block={selected}
           viewport={viewport}
+          container={{ width: designWidth, gutter: box.gutter }}
           assets={assets}
           pages={pages}
           textStyles={textStyles}

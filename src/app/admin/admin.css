@@ -389,3 +389,54 @@ select.admin-field {
   white-space: nowrap;
   border: 0;
 }
+
+/* --- Guías del container en el editor -------------------------------------
+   Marcan el ancho de la columna de contenido, sus márgenes y el eje central,
+   para poder alinear a ojo sin adivinar. Van bajo los bloques y no capturan
+   el ratón. */
+
+.editor-guides {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.editor-guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(47, 111, 237, 0.35);
+}
+
+.editor-guide--edge {
+  background: rgba(47, 111, 237, 0.55);
+}
+
+.editor-guide--center {
+  background: rgba(47, 111, 237, 0.22);
+  border-left: 1px dashed rgba(47, 111, 237, 0.5);
+  background: none;
+}
+
+/* Franja reservada a la cabecera: si un bloque cae aquí, chocará con el
+   wordmark y el botón del menú. */
+.editor-chrome-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  background: rgba(200, 60, 40, 0.07);
+  border-bottom: 1px dashed rgba(200, 60, 40, 0.45);
+}
+
+/* Bloque que se sale del container. */
+.editor-block[data-outside='true'] {
+  outline-color: rgba(200, 60, 40, 0.75);
+}
+
+.editor-align {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}

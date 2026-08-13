@@ -50,6 +50,25 @@ html.fonts-adobe {
   initial-value: 1px;
 }
 
+/* Container del portafolio, en unidades de diseño.
+   `--rm-cw` es el ancho de la columna de contenido y `--rm-gutter` el margen
+   lateral que usa el propio diseño. Los elementos de cabecera —el wordmark y
+   el botón del menú— se alinean contra ellos en vez de contra el borde de la
+   ventana, para que en pantallas anchas no queden desperdigados. */
+:root {
+  --rm-cw: 1024;
+  --rm-gutter: 48;
+  --rm-chrome-mid: 40;
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --rm-cw: 320;
+    --rm-gutter: 20;
+    --rm-chrome-mid: 30;
+  }
+}
+
 .rm-stage {
   container-type: inline-size;
   width: 100%;
@@ -124,15 +143,14 @@ html.fonts-adobe {
 }
 
 /* --------------------------------------------------------------------------
-   Capa fija
-   Los elementos anclados al viewport (el wordmark, el botón del menú) viven en
-   una capa aparte que cubre la pantalla, igual que el
-   `.fixed-position-container` del original. Así no los recorta el `overflow`
-   del lienzo y sus anclajes se miden contra la ventana, no contra las 1024
-   unidades del diseño.
+   Elementos anclados al viewport
+   El wordmark y el botón del menú se posicionan contra la ventana en vez de
+   contra el lienzo. Viven dentro de `.rm-canvas` para que su z-index los
+   ordene junto al resto del contenido; el `overflow: hidden` del lienzo no los
+   recorta porque un elemento `position: fixed` no toma como referencia un
+   ancestro sin transform ni contención.
    -------------------------------------------------------------------------- */
 
-.rm-fixed-layer,
 .rm-menu-layer,
 .rm-menu-icons {
   position: fixed;
@@ -142,13 +160,9 @@ html.fonts-adobe {
   --u: calc(100cqw / 1024);
 }
 
-/* Orden de apilamiento del sitio, de abajo arriba:
-   contenido de la página → wordmark anclado → panel del menú → sus iconos.
-   Se declara explícito para que no dependa del orden del DOM. */
-.rm-fixed-layer {
-  z-index: 90;
-}
-
+/* Orden de apilamiento del sitio, de abajo arriba: la página entera (aislada
+   en `.rm-canvas`, donde sus z-index de diseño se ordenan entre sí) → el panel
+   del menú → sus iconos. */
 .rm-menu-layer {
   z-index: 100;
 }
@@ -158,7 +172,6 @@ html.fonts-adobe {
 }
 
 @media (min-width: 1024px) {
-  .rm-fixed-layer,
   .rm-menu-layer,
   .rm-menu-icons {
     --u: 1px;
@@ -166,14 +179,12 @@ html.fonts-adobe {
 }
 
 @media (max-width: 767.98px) {
-  .rm-fixed-layer,
   .rm-menu-layer,
   .rm-menu-icons {
     --u: calc(100cqw / 320);
   }
 }
 
-.rm-fixed-layer .rm-block,
 .rm-menu-layer .rm-block,
 .rm-menu-icons .rm-block {
   pointer-events: auto;
@@ -229,11 +240,24 @@ body[data-menu-open='true'] {
 
 /* Anclajes. `c` centra respecto a la pantalla y sus coordenadas son un
    desplazamiento desde ese centro; los cardinales miden desde el borde. */
+.rm-block[data-fixed] {
+  position: fixed;
+}
+
 [data-fixed='c'] {
   left: 50%;
   top: 50%;
   margin-left: calc((var(--dx) - var(--dw) / 2) * var(--u));
   margin-top: calc((var(--dy) - var(--dh) / 2) * var(--u));
+}
+
+/* Anclado al container: la x se mide desde el borde izquierdo de la columna de
+   contenido y la y desde arriba de la ventana. Así la cabecera queda siempre a
+   la misma altura, sin depender de lo alta que sea la pantalla —que es lo que
+   hacía que el logo se solapara con el título en ventanas bajas. */
+[data-fixed='container'] {
+  left: calc(50% + (var(--dx) - var(--rm-cw) / 2) * var(--u));
+  top: calc(var(--dy) * var(--u));
 }
 
 [data-fixed='nw'] {
@@ -279,6 +303,11 @@ body[data-menu-open='true'] {
     margin-top: calc((var(--my) - var(--mh) / 2) * var(--u));
   }
 
+  [data-fixed-mobile='container'] {
+    left: calc(50% + (var(--mx) - var(--rm-cw) / 2) * var(--u));
+    top: calc(var(--my) * var(--u));
+  }
+
   [data-fixed-mobile='nw'] {
     left: calc(var(--mx) * var(--u));
     top: calc(var(--my) * var(--u));
@@ -315,6 +344,16 @@ body[data-menu-open='true'] {
   rotate: var(--rot, 0deg);
   opacity: var(--op, 1);
   will-change: translate, scale;
+}
+
+/* En móvil el original no anima el wordmark al hacer scroll: se queda fijo
+   arriba. Se neutraliza aquí en vez de en el cliente para que dependa del
+   viewport igual que el resto del sistema. */
+@media (max-width: 767.98px) {
+  .rm-anim {
+    translate: none;
+    scale: 1;
+  }
 }
 
 /* --------------------------------------------------------------------------

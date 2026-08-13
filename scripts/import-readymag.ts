@@ -196,6 +196,157 @@ function mobileGeometry(widget: RmWidget, viewport: RmViewport | undefined) {
 }
 
 // ---------------------------------------------------------------------------
+// Cabecera
+// ---------------------------------------------------------------------------
+
+/** Geometría del container, en unidades de diseño. Refleja globals.css. */
+const CONTAINER = {
+  desktop: { width: 1024, gutter: 48, chromeMid: 40 },
+  mobile: { width: 320, gutter: 20, chromeMid: 30 },
+};
+
+/**
+ * Ancla el wordmark y el botón del menú al container.
+ *
+ * En el original ambos se posicionan respecto al centro de la ventana, así que
+ * su altura depende de lo alta que sea la pantalla: medido sobre el sitio real,
+ * el logo de /norologio cae en y=−15 (fuera de cuadro) con una ventana de 700 px
+ * y en y=235 —encima del contenido— con una de 1200. Aquí se fijan a una franja
+ * de cabecera de altura constante, alineados entre sí y con los márgenes de la
+ * columna de contenido.
+ *
+ * En la portada el wordmark sigue entrando grande y encogiendo con el scroll;
+ * lo que se calcula es su posición **de reposo**, de modo que al terminar la
+ * animación quede exactamente en la franja de cabecera.
+ */
+async function layoutChrome() {
+  const blocks = await prisma.block.findMany({
+    where: { OR: [{ dFixed: { not: null } }, { mFixed: { not: null } }] },
+    include: { page: { select: { slug: true } } },
+  });
+
+  let moved = 0;
+
+  for (const block of blocks) {
+    if (block.kind !== 'IMAGE') continue; //  el texto de portada sigue centrado a propósito
+
+    const animations = (Array.isArray(block.animations) ? block.animations : []) as {
+      kind: string;
+      steps: { dy?: number; scale?: number; fromScale?: number; useScale?: boolean }[];
+    }[];
+    // Los iconos del menú van a la derecha; el wordmark, a la izquierda.
+    const isMenuIcon = block.scope === 'GLOBAL';
+
+    // La animación de scroll solo tiene sentido en la portada, donde el
+    // wordmark entra grande y encoge hasta la cabecera. En el resto de páginas
+    // ya nace pequeño y la animación es un resto: en /contact, además, la
+    // página no llega a desplazarse, así que el logo se quedaba a media altura
+    // encima del contenido para siempre. Se retira allí donde no aporta.
+    const isHomeHero = block.page?.slug === '';
+    if (!isHomeHero && animations.some((a) => a.kind === 'SCROLL')) {
+      await prisma.block.update({
+        where: { id: block.id },
+        data: { animations: animations.filter((a) => a.kind !== 'SCROLL') as never },
+      });
+    }
+    const scroll = isHomeHero ? animations.find((a) => a.kind === 'SCROLL')?.steps[0] : undefined;
+
+    const place = (
+      width: number | null,
+      height: number | null,
+      box: (typeof CONTAINER)['desktop'],
+      animate: boolean
+    ) => {
+      const w = width ?? 0;
+      const h = height ?? 0;
+      const x = isMenuIcon ? box.width - box.gutter - w : box.gutter;
+
+      // Sin animación, el centro del bloque debe caer en la línea de cabecera.
+      // Con ella, el bloque escala alrededor de su centro y luego se desplaza,
+      // así que se despeja la posición inicial que deja el centro final ahí.
+      if (!animate || !scroll?.useScale) return { x, y: box.chromeMid - h / 2 };
+      const dy = scroll.dy ?? 0;
+      return { x, y: box.chromeMid - h / 2 - dy };
+    };
+
+    // El desplazamiento por scroll solo ocurre en escritorio.
+    const d = place(block.dW, block.dH, CONTAINER.desktop, Boolean(scroll));
+    const m = place(block.mW, block.mH, CONTAINER.mobile, false);
+
+    await prisma.block.update({
+      where: { id: block.id },
+      data: {
+        dX: d.x,
+        dY: d.y,
+        dFixed: 'container',
+        mX: m.x,
+        mY: m.y,
+        mFixed: 'container',
+      },
+    });
+    moved += 1;
+  }
+
+  log(`✓ ${moved} elementos de cabecera alineados al container`);
+}
+
+/**
+ * Corrige el bloque de formación y experiencia de /about en móvil.
+ *
+ * El original arrastra dos errores que solo se ven en la versión de teléfono:
+ *
+ *  1. Los rótulos están cruzados. «Education» encabeza los empleos (MSH, Xploy,
+ *     PrintArt) y «Experience» los títulos (Master, Bachelor); en escritorio
+ *     están al revés, que es lo correcto. El texto es el mismo objeto para los
+ *     dos viewports, así que no se puede reescribir sin romper el escritorio:
+ *     lo que se intercambia es la posición móvil de cada rótulo.
+ *
+ *  2. Entre el párrafo «This portfolio brings together…» (termina en 697) y la
+ *     primera sección hay 178 unidades vacías, más del triple de la separación
+ *     que la propia página usa entre secciones (46). Todo lo que va por debajo
+ *     sube 118 unidades y el alto de la página se recorta igual, de modo que el
+ *     aire sobrante del final se conserva tal cual.
+ *
+ * Las cuatro cajas se alinean además al margen de 20 del container; el original
+ * mezcla 19 y 20 sin criterio.
+ */
+async function fixAboutMobile() {
+  const SHIFT = 118;
+  const GUTTER = CONTAINER.mobile.gutter;
+
+  // y de destino en móvil, ya con el desplazamiento aplicado y los rótulos
+  // puestos cada uno sobre su propio contenido.
+  const layout: Record<string, number> = {
+    '69efd65508d2323e999ec8a8': 875 - SHIFT, // «Experience» → sobre los empleos
+    '69efd65508d2323e999ec8a9': 902 - SHIFT, //   MSH · Xploy · PrintArt
+    '69efd65508d2323e999ec8aa': 1052 - SHIFT, // «Education» → sobre los títulos
+    '69efd65508d2323e999ec8ab': 1076 - SHIFT, //   Master · Bachelor
+  };
+
+  let fixed = 0;
+  for (const [id, mY] of Object.entries(layout)) {
+    const block = await prisma.block.findUnique({ where: { id }, select: { id: true } });
+    if (!block) continue;
+    await prisma.block.update({ where: { id }, data: { mY, mX: GUTTER } });
+    fixed += 1;
+  }
+
+  if (fixed) {
+    const page = await prisma.page.findFirst({
+      where: { slug: 'about' },
+      select: { id: true, heightMobile: true },
+    });
+    if (page?.heightMobile) {
+      await prisma.page.update({
+        where: { id: page.id },
+        data: { heightMobile: page.heightMobile - SHIFT },
+      });
+    }
+    log(`✓ /about móvil: rótulos corregidos y ${SHIFT} unidades de hueco eliminadas`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Importación
 // ---------------------------------------------------------------------------
 
@@ -511,6 +662,10 @@ async function main() {
       update: {},
     });
   }
+
+  // --- Cabecera -------------------------------------------------------------
+  await layoutChrome();
+  await fixAboutMobile();
 
   // --- Proyectos ------------------------------------------------------------
   let projectCount = 0;
