@@ -340,6 +340,10 @@ export function PageEditor({
 
       syncPreview([merged]);
       setBlocks(next);
+      // El marco de selección se dibuja desde `live` cuando hay una anotación
+      // del inspector, así que arrastrar sin actualizarla dejaba el marco
+      // clavado en la posición anterior mientras el contenido se movía.
+      setLive((prev) => (prev[id] ? { ...prev, [id]: merged } : prev));
       setDirty((prev) => {
         if (prev.has(id)) return prev;
         const merged = new Set(prev).add(id);

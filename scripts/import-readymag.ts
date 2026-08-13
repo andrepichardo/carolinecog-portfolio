@@ -13,6 +13,7 @@
  */
 
 import 'dotenv/config';
+import { createHash } from 'node:crypto';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { imageSize } from 'image-size';
@@ -84,6 +85,8 @@ interface AssetRecord {
   height: number | null;
   isSvg: boolean;
   svgMarkup: string | null;
+  /** sha256 del archivo local, para detectar copias con otro nombre. */
+  hash: string | null;
 }
 
 const MIME: Record<string, string> = {
@@ -153,6 +156,7 @@ function buildAsset(url: string, hintW?: number, hintH?: number): AssetRecord {
     height,
     isSvg,
     svgMarkup,
+    hash: hasLocal ? createHash('sha256').update(readFileSync(localPath)).digest('hex') : null,
   };
 }
 
@@ -419,15 +423,36 @@ async function main() {
   log(`✓ ${linkStyleKeys.size} estilos de enlace`);
 
   // --- Assets ---------------------------------------------------------------
-  const assets = new Map<string, AssetRecord>(); //  url → asset
+  //
+  // El original sube un archivo por cada vez que se coloca una imagen, así que
+  // hay varias parejas de ficheros con nombre distinto y contenido idéntico:
+  // la foto de /about aparece dos veces (una por viewport), y cada proyecto
+  // repite alguna. Se agrupan por sha256 del archivo local y se queda una sola:
+  // los bloques apuntan todos a ella, que es exactamente lo mismo que se ve.
+  const assets = new Map<string, AssetRecord>(); //  id → asset
+  const idByUrl = new Map<string, string>();
+  const idByHash = new Map<string, string>();
+  let deduped = 0;
 
   function registerAsset(picture: RmPicture | undefined, widget: RmWidget): string | null {
     const url = pictureUrl(picture);
     if (!url) return null;
-    if (!assets.has(url)) {
-      assets.set(url, buildAsset(url, widget.originalW, widget.originalH));
+
+    const known = idByUrl.get(url);
+    if (known) return known;
+
+    const asset = buildAsset(url, widget.originalW, widget.originalH);
+    const canonical = asset.hash ? idByHash.get(asset.hash) : undefined;
+    if (canonical) {
+      idByUrl.set(url, canonical);
+      deduped += 1;
+      return canonical;
     }
-    return assets.get(url)!.id;
+
+    if (asset.hash) idByHash.set(asset.hash, asset.id);
+    assets.set(asset.id, asset);
+    idByUrl.set(url, asset.id);
+    return asset.id;
   }
 
   const allWidgets: { widget: RmWidget; pageUri: string | null }[] = [];
@@ -470,7 +495,10 @@ async function main() {
       update: existing?.pathname ? data : { url: asset.url, ...data },
     });
   }
-  log(`✓ ${assets.size} assets`);
+  log(
+    `✓ ${assets.size} assets` +
+      (deduped ? ` (${deduped} copias con otro nombre unificadas)` : '')
+  );
 
   // --- Páginas --------------------------------------------------------------
   const pageIdByRmId = new Map<string, string>();

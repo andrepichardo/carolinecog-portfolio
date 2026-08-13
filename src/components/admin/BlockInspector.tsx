@@ -305,6 +305,27 @@ function BlockForm({
     onPreviewRef.current(form, url);
   }, [form]);
 
+  // La geometría también cambia por fuera del panel: arrastrando en el lienzo o
+  // con las flechas. Sin esto los campos X/Y/W/H seguirían mostrando el valor de
+  // antes del arrastre, el bloque se daría por modificado sin serlo, y «Save
+  // block» devolvería el elemento a donde estaba.
+  const geometryKey = [
+    block.dX, block.dY, block.dW, block.dH,
+    block.mX, block.mY, block.mW, block.mH,
+  ].join(',');
+  const lastGeometry = useRef(geometryKey);
+  useEffect(() => {
+    if (geometryKey === lastGeometry.current) return;
+    lastGeometry.current = geometryKey;
+    setForm((prev) => ({
+      ...prev,
+      dX: block.dX, dY: block.dY, dW: block.dW, dH: block.dH,
+      mX: block.mX, mY: block.mY, mW: block.mW, mH: block.mH,
+    }));
+    // `block` se lee solo para copiar la geometría que acaba de cambiar.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geometryKey]);
+
   const dirty = JSON.stringify(form) !== JSON.stringify(block);
 
   const paragraphs = ((form.text as { paragraphs?: Paragraph[] } | null)

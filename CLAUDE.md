@@ -111,6 +111,16 @@ Cada una costó una sesión de depuración. No volver a caer:
   y ganaba sin ser la que pinta. Next precarga igualmente toda imagen no
   diferida, así que en `/about` y `/norologio` se descarga de más la variante del
   viewport contrario: es el precio de no diferir el LCP en ninguno de los dos.
+- **El original sube un archivo por cada colocación**, así que hay parejas de
+  ficheros con nombre distinto y contenido idéntico —la foto de `/about` está
+  dos veces, una por viewport, y cada proyecto repite alguna—. El importador las
+  agrupa por sha256 del archivo local y deja una sola (`idByHash` en
+  `registerAsset`): 40 assets pasaron a 30 y 10,8 MB de Blob se liberaron.
+- **Las tres páginas de proyecto apilan dos imágenes en el mismo sitio** en
+  escritorio (524×339 debajo, 524×352 encima, misma x/y): la de abajo queda
+  tapada por completo. **No son bloques que sobren**: en móvil van a alturas
+  distintas y las dos se ven. Está así en el original; comprobado widget a
+  widget antes de tocar nada.
 - **El importador verifica su salida.** El contador de bloques cuenta llamadas
   al upsert, no filas: una imagen de `/norologio` estuvo ausente varias
   importaciones seguidas mientras el resumen decía que estaban todas. Ahora

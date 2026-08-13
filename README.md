@@ -221,7 +221,10 @@ Las páginas públicas son estáticas; cada guardado revalida las rutas afectada
 - `SiteSettings`, `NavItem`, `User`.
 
 El importador reutiliza los identificadores de Readymag como IDs de página y de
-bloque, así que se puede volver a ejecutar sin duplicar nada.
+bloque, así que se puede volver a ejecutar sin duplicar nada. Las imágenes se
+agrupan además por el hash de su contenido: el original sube un archivo por cada
+vez que se coloca una foto, de modo que había diez copias con otro nombre y el
+mismo contenido.
 
 ## Despliegue en Vercel
 
