@@ -670,6 +670,11 @@ export function PageEditor({
               width: frameWidth * zoom,
               height: frameHeight * zoom,
               position: 'relative',
+              // El lienzo móvil mide 390 y el escenario es mucho más ancho, así
+              // que sin esto queda pegado a la izquierda con un vacío enorme al
+              // lado. En escritorio no cambia nada: ahí el zoom lo hace ocupar
+              // todo el ancho disponible.
+              marginInline: 'auto',
             }}
           >
             <div
