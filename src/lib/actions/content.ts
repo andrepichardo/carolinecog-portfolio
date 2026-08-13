@@ -237,6 +237,26 @@ export async function updateProject(input: z.input<typeof projectSchema>): Promi
   });
 }
 
+/**
+ * Fija el orden de los proyectos a partir de la lista que envía el CMS.
+ *
+ * Se recibe la secuencia completa y se renumera de cero en adelante, en vez de
+ * guardar el número de cada uno por separado: así el orden que se ve en la
+ * pantalla es literalmente el que se guarda, y no hay forma de acabar con dos
+ * proyectos compartiendo posición.
+ */
+export async function reorderProjects(ids: string[]): Promise<ActionResult> {
+  return guard(async () => {
+    const parsed = z.array(z.string().min(1)).min(1).parse(ids);
+    await prisma.$transaction(
+      parsed.map((id, index) =>
+        prisma.project.update({ where: { id }, data: { order: index } })
+      )
+    );
+    revalidateSite();
+  });
+}
+
 const newProjectSchema = z.object({
   name: z.string().min(1, 'Give the project a name'),
   slug: z

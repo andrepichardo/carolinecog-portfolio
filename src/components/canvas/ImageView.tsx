@@ -51,7 +51,19 @@ function SvgAsset({ asset, className }: { asset: AssetData; className: string })
   );
 }
 
-export function ImageView({ block }: { block: BlockData }) {
+export function ImageView({
+  block,
+  eager = { desktop: false, mobile: false },
+}: {
+  block: BlockData;
+  /**
+   * Imagen mayor del primer pantallazo, por viewport: se carga de inmediato en
+   * lugar de en diferido. Viene separado porque un bloque puede tener un
+   * archivo distinto para cada uno, y adelantar el que no toca haría que el
+   * teléfono se descargase además la versión de escritorio.
+   */
+  eager?: { desktop: boolean; mobile: boolean };
+}) {
   const asset = block.asset;
   const mobileAsset = block.mobileAsset;
   const content = block.image;
@@ -60,21 +72,31 @@ export function ImageView({ block }: { block: BlockData }) {
   if (!asset && !mobileAsset) return null;
 
   const hasSeparateMobile = Boolean(mobileAsset && mobileAsset.id !== asset?.id);
-  const fit = content?.objectFit === 'contain' ? ' rm-image--contain' : '';
+
+  // Un bloque puede existir en un solo viewport: los que únicamente aparecen en
+  // móvil no traen contenido de escritorio, y al revés. Cada viewport usa el
+  // suyo y, si le falta, el del otro. Sin esto las variables de recorte de un
+  // lado quedaban sin definir y la imagen se dibujaba entera dentro de su caja,
+  // encogida y rodeada de vacío.
+  const desktop = content?.crop ? content : (mobileContent ?? content);
+  const mobile = mobileContent?.crop ? mobileContent : (content ?? mobileContent);
+  const any = content ?? mobileContent;
+
+  const fit = any?.objectFit === 'contain' ? ' rm-image--contain' : '';
 
   const style: CSSProperties = {
-    ...radiusVars(content),
-    ...cropVars(content, 'c'),
-    ...cropVars(mobileContent ?? content, 'mc'),
+    ...radiusVars(any),
+    ...cropVars(desktop, 'c'),
+    ...cropVars(mobile, 'mc'),
   };
 
-  const alt = content?.alt ?? asset?.alt ?? '';
+  const alt = any?.alt ?? asset?.alt ?? mobileAsset?.alt ?? '';
 
   if (asset?.isSvg && !hasSeparateMobile) {
     return <SvgAsset asset={asset} className={`rm-image rm-image--svg${fit}`} />;
   }
 
-  const cropped = Boolean(content?.crop && content?.original);
+  const cropped = Boolean(desktop?.crop && desktop?.original);
 
   return (
     <div className={`rm-image${fit}${cropped ? ' rm-image--cropped' : ''}`} style={style}>
@@ -88,6 +110,11 @@ export function ImageView({ block }: { block: BlockData }) {
           placeholder={asset.blurDataUrl ? 'blur' : 'empty'}
           blurDataURL={asset.blurDataUrl ?? undefined}
           sizes="(max-width: 767px) 100vw, 1024px"
+          loading={
+            eager.desktop || (eager.mobile && !hasSeparateMobile)
+              ? 'eager'
+              : undefined
+          }
         />
       ) : asset?.isSvg ? (
         <div
@@ -112,6 +139,7 @@ export function ImageView({ block }: { block: BlockData }) {
             placeholder={mobileAsset.blurDataUrl ? 'blur' : 'empty'}
             blurDataURL={mobileAsset.blurDataUrl ?? undefined}
             sizes="100vw"
+            loading={eager.mobile ? 'eager' : undefined}
           />
         )
       ) : null}

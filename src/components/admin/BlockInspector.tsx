@@ -388,7 +388,9 @@ function BlockForm({
           </div>
           <p className="admin-muted mt-2 text-[11px]">
             The container is {container.width} units wide with a {container.gutter}-unit margin.
-            Dragging snaps to those edges and to the centre line.
+            Dragging snaps to those edges and to the centre line — by the block&rsquo;s
+            own left edge, centre or right edge, whichever is closest. Hold Alt to
+            place a block freely without snapping.
           </p>
         </div>
 

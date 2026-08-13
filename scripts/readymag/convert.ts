@@ -403,8 +403,13 @@ export function convertImage(
   const cropY = src.cropY ?? widget.cropY;
   const cropW = src.cropW ?? widget.cropW;
   const cropH = src.cropH ?? widget.cropH;
-  const originalW = widget.originalW;
-  const originalH = widget.originalH;
+  // Las dimensiones del original también se buscan primero en el viewport: en
+  // los bloques que solo existen en móvil el widget de escritorio viene vacío y
+  // todo —recorte incluido— cuelga de `viewport_phone_portrait`. Leyéndolas
+  // solo del widget, la condición de abajo fallaba y el recorte se perdía: la
+  // imagen se pintaba entera dentro de su caja, encogida y rodeada de vacío.
+  const originalW = src.originalW ?? widget.originalW;
+  const originalH = src.originalH ?? widget.originalH;
   const width = viewport?.w ?? widget.w;
 
   const content: ImageContent = {};

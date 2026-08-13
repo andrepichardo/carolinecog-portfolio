@@ -91,6 +91,10 @@ export interface RmViewport {
   cropY?: number;
   cropW?: number;
   cropH?: number;
+  // Presentes cuando el bloque solo existe en móvil: el widget de escritorio
+  // viene vacío y las dimensiones del original cuelgan de aquí.
+  originalW?: number;
+  originalH?: number;
   color?: string;
   blocks?: RmTextBlock[];
   styles?: RmStyleEntry[];

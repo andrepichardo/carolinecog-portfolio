@@ -14,6 +14,8 @@ interface BlockViewProps {
   styleOverride?: CSSProperties;
   /** Atributos extra (interactividad y accesibilidad del botón del menú). */
   attrs?: Record<string, unknown>;
+  /** Por viewport: la imagen mayor del primer pantallazo, que no se difiere. */
+  eager?: { desktop: boolean; mobile: boolean };
 }
 
 /**
@@ -43,12 +45,12 @@ function geometryVars(block: BlockData): CSSProperties {
   } as CSSProperties;
 }
 
-function BlockContent({ block, textStyles }: BlockViewProps): ReactNode {
+function BlockContent({ block, textStyles, eager }: BlockViewProps): ReactNode {
   switch (block.kind) {
     case 'TEXT':
       return <TextView block={block} textStyles={textStyles} />;
     case 'IMAGE':
-      return <ImageView block={block} />;
+      return <ImageView block={block} eager={eager} />;
     case 'SHAPE':
       return <ShapeView block={block} />;
     default:
@@ -56,11 +58,19 @@ function BlockContent({ block, textStyles }: BlockViewProps): ReactNode {
   }
 }
 
-export function BlockView({ block, textStyles, styleOverride, attrs }: BlockViewProps) {
+export function BlockView({
+  block,
+  textStyles,
+  styleOverride,
+  attrs,
+  eager,
+}: BlockViewProps) {
   const scroll = firstOfKind(block.animations, 'SCROLL');
   const hover = firstOfKind(block.animations, 'HOVER');
 
-  let content: ReactNode = <BlockContent block={block} textStyles={textStyles} />;
+  let content: ReactNode = (
+    <BlockContent block={block} textStyles={textStyles} eager={eager} />
+  );
 
   // Los enlaces envuelven el contenido, no el bloque: así el área clicable
   // coincide exactamente con la caja del widget, como en el original.

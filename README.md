@@ -181,11 +181,16 @@ En `/admin`:
   dentro de un iframe, así que lo que se ve es exactamente lo que se publica.
   Los bloques se arrastran, se redimensionan y se ajustan con las flechas
   (Mayús = 10 unidades). Escritorio y móvil se editan por separado. El panel de
-  capas permite seleccionar bloques tapados por otros. `Ctrl+Z` deshace y
-  `Ctrl+Mayús+Z` rehace: un arrastre entero cuenta como un solo paso, igual que
-  una ráfaga de flechas sobre el mismo bloque.
-- **Proyectos** — ficha técnica (cliente, año, supervisión), orden y proyecto
-  siguiente.
+  capas permite seleccionar bloques tapados por otros. Al arrastrar, los bloques
+  **enganchan** a los márgenes y al eje del container —por su borde izquierdo,
+  su centro o su derecho, el que quede más cerca— y la guía que atrapa se
+  ilumina; con Alt se coloca libremente. `Ctrl+Z` deshace y `Ctrl+Mayús+Z`
+  rehace: un arrastre entero cuenta como un solo paso, igual que una ráfaga de
+  flechas sobre el mismo bloque.
+- **Proyectos** — ficha técnica (cliente, año, supervisión) y proyecto
+  siguiente. El orden se cambia arrastrando la lista de arriba, o con las
+  flechas; se guarda la secuencia entera, así que no hay forma de dejar dos
+  proyectos en la misma posición.
 - **Imágenes** — biblioteca compartida, con subida a Vercel Blob y texto
   alternativo. No deja borrar una imagen que esté en uso.
 - **Tipografía** — los estilos compartidos del proyecto. Cambiar uno afecta a

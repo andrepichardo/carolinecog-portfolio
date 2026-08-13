@@ -44,7 +44,7 @@ const PAGE_META: Record<
   string,
   { slug: string; kind: 'HOME' | 'ABOUT' | 'CONTACT' | 'PROJECT'; title: string; order: number }
 > = {
-  main: { slug: '', kind: 'HOME', title: 'Inicio', order: 0 },
+  main: { slug: '', kind: 'HOME', title: 'Home', order: 0 },
   about: { slug: 'about', kind: 'ABOUT', title: 'About', order: 1 },
   contacts: { slug: 'contact', kind: 'CONTACT', title: 'Contact', order: 2 },
   norologio: { slug: 'norologio', kind: 'PROJECT', title: 'Norologio', order: 3 },
@@ -636,7 +636,25 @@ async function main() {
   for (const widget of mag.aboveAllWidgets ?? []) {
     await importWidget(widget, null, 'GLOBAL');
   }
-  log(`✓ ${blockCount} bloques`);
+  // `blockCount` cuenta llamadas al upsert, no filas escritas. Se comprueba
+  // contra la base porque ya ocurrió lo contrario: una imagen de /norologio
+  // estuvo ausente durante varias importaciones seguidas mientras el resumen
+  // seguía diciendo que estaban todas. Un fallo así se lleva contenido por
+  // delante sin dejar rastro, así que aquí es preferible reventar.
+  const esperados = allWidgets
+    .filter(({ widget }) => widget.type !== 'background')
+    .map(({ widget }) => widget.wid);
+  const presentes = new Set(
+    (await prisma.block.findMany({ select: { id: true } })).map((b) => b.id)
+  );
+  const ausentes = esperados.filter((id) => !presentes.has(id));
+  if (ausentes.length) {
+    throw new Error(
+      `Se esperaban ${esperados.length} bloques y faltan ${ausentes.length} en la base: ` +
+        ausentes.join(', ')
+    );
+  }
+  log(`✓ ${blockCount} bloques (${esperados.length} verificados en la base)`);
   if (unresolvedLinks.size) {
     log(
       `⚠  ${unresolvedLinks.size} enlaces apuntaban a páginas inexistentes y se ` +

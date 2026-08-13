@@ -128,6 +128,31 @@ export function PageEditor({
   const guidesRef = useRef(guides);
   guidesRef.current = guides;
 
+  /** Horizontal lines: the bottom of the header strip. */
+  const hGuides = useMemo(() => [box.chrome], [box.chrome]);
+  const hGuidesRef = useRef(hGuides);
+  hGuidesRef.current = hGuides;
+
+  // Guías que el bloque está tocando ahora mismo, para resaltarlas. Se compara
+  // antes de asignar: si no, cada fotograma del arrastre crearía un objeto
+  // nuevo y volvería a pintar el editor entero sin que nada hubiera cambiado.
+  const [activeGuides, setActiveGuides] = useState<{ x: number[]; y: number[] }>({
+    x: [],
+    y: [],
+  });
+  const setGuidesIfChanged = useCallback((x: number[], y: number[]) => {
+    setActiveGuides((prev) =>
+      prev.x.length === x.length &&
+      prev.y.length === y.length &&
+      prev.x.every((n, i) => n === x[i]) &&
+      prev.y.every((n, i) => n === y[i])
+        ? prev
+        : { x, y }
+    );
+  }, []);
+  const setGuidesRef = useRef(setGuidesIfChanged);
+  setGuidesRef.current = setGuidesIfChanged;
+
   const geometryOf = useCallback(
     (block: EditorBlock) =>
       viewport === 'desktop'
@@ -175,6 +200,20 @@ export function PageEditor({
       el.style.setProperty('--mw', String(block.mW ?? block.dW ?? 0));
       el.style.setProperty('--mh', String(block.mH ?? block.dH ?? 0));
     }
+  }, []);
+
+  /**
+   * Take a block out of the preview straight away.
+   *
+   * Deleting happens on the server, and the iframe has no way of hearing about
+   * it: it keeps showing the element until something reloads it. Reloading for
+   * a deletion would blank and repaint the whole page, so the node is dropped
+   * by hand instead and the reload is left to the refresh that follows.
+   */
+  const removeFromPreview = useCallback((id: string) => {
+    frameRef.current?.contentDocument
+      ?.querySelector(`[data-id="${CSS.escape(id)}"]`)
+      ?.remove();
   }, []);
 
   // Unsaved moves would be lost when the iframe reloads, so they are re-applied.
@@ -323,22 +362,55 @@ export function PageEditor({
       const dx = (event.clientX - drag.startX) / scale;
       const dy = (event.clientY - drag.startY) / scale;
       const step = event.shiftKey ? 10 : 1;
-      const snap = (n: number) => Math.round(n / step) * step;
+      const round = (n: number) => Math.round(n / step) * step;
+
+      /**
+       * Pull an edge onto the nearest guide.
+       *
+       * Every edge of the block is offered to every guide and the closest pair
+       * within `SNAP` wins, so a block can be caught by its left edge, its
+       * centre or its right edge — whichever the hand is nearest. Returns how
+       * far the block has to move, plus the guides that caught it so they can
+       * light up.
+       *
+       * Holding Alt suspends it: sometimes a block genuinely belongs a few
+       * units off the margin and there has to be a way to put it there.
+       */
+      const magnet = (start: number, size: number, lines: number[]) => {
+        if (event.altKey) return { shift: 0, hit: [] as number[] };
+        let best: { shift: number; line: number } | null = null;
+        for (const edge of [start, start + size / 2, start + size]) {
+          for (const line of lines) {
+            const delta = line - edge;
+            if (Math.abs(delta) > SNAP) continue;
+            if (!best || Math.abs(delta) < Math.abs(best.shift)) {
+              best = { shift: delta, line };
+            }
+          }
+        }
+        return best ? { shift: best.shift, hit: [best.line] } : { shift: 0, hit: [] };
+      };
 
       if (drag.mode === 'move') {
-        patchRef.current(drag.id, {
-          x: snap(drag.origin.x + dx),
-          y: snap(drag.origin.y + dy),
-        });
+        const x = round(drag.origin.x + dx);
+        const y = round(drag.origin.y + dy);
+        const mx = magnet(x, drag.origin.w, guidesRef.current);
+        const my = magnet(y, drag.origin.h, hGuidesRef.current);
+        setGuidesRef.current(mx.hit, my.hit);
+        patchRef.current(drag.id, { x: x + mx.shift, y: y + my.shift });
       } else {
-        patchRef.current(drag.id, {
-          w: snap(drag.origin.w + dx),
-          h: snap(drag.origin.h + dy),
-        });
+        // Al redimensionar solo se mueve la esquina inferior derecha, así que
+        // solo ese borde busca guía.
+        const w = round(drag.origin.w + dx);
+        const h = round(drag.origin.h + dy);
+        const mw = magnet(drag.origin.x + w, 0, guidesRef.current);
+        setGuidesRef.current(mw.hit, []);
+        patchRef.current(drag.id, { w: w + mw.shift, h });
       }
     };
     const onUp = () => {
       dragRef.current = null;
+      setGuidesRef.current([], []);
     };
 
     window.addEventListener('pointermove', onMove, { passive: false });
@@ -523,7 +595,10 @@ export function PageEditor({
                   startTransition(async () => {
                     const result = await createBlock(page.id, kind);
                     setMessage(result.ok ? 'Block added' : result.error);
-                    if (result.ok) router.refresh();
+                    if (result.ok) {
+                      setPreviewKey((k) => k + 1);
+                      router.refresh();
+                    }
                   })
                 }
               >
@@ -611,11 +686,22 @@ export function PageEditor({
                       key={x}
                       className={`editor-guide${
                         i === 0 || i === 4 ? ' editor-guide--edge' : ''
-                      }${i === 2 ? ' editor-guide--center' : ''}`}
+                      }${i === 2 ? ' editor-guide--center' : ''}${
+                        activeGuides.x.includes(x) ? ' editor-guide--live' : ''
+                      }`}
                       style={{ left: x * unit }}
                     />
                   )
                 )}
+                {hGuides.map((y) => (
+                  <div
+                    key={`h${y}`}
+                    className={`editor-guide editor-guide--h${
+                      activeGuides.y.includes(y) ? ' editor-guide--live' : ''
+                    }`}
+                    style={{ top: y * unit }}
+                  />
+                ))}
               </div>
 
               <div className="absolute inset-0">
@@ -735,12 +821,33 @@ export function PageEditor({
           onDelete={() =>
             selected &&
             startTransition(async () => {
-              const result = await deleteBlock(selected.id);
+              const id = selected.id;
+              const result = await deleteBlock(id);
               setMessage(result.ok ? 'Block deleted' : result.error);
-              if (result.ok) {
-                setSelectedId(null);
-                router.refresh();
-              }
+              if (!result.ok) return;
+
+              removeFromPreview(id);
+              const next = blocksRef.current.filter((b) => b.id !== id);
+              blocksRef.current = next;
+              setBlocks(next);
+              setSelectedId(null);
+              setDirty((prev) => {
+                if (!prev.has(id)) return prev;
+                const merged = new Set(prev);
+                merged.delete(id);
+                dirtyRef.current = merged;
+                return merged;
+              });
+              // El bloque se borra también de la historia en lugar de vaciarla:
+              // deshacer no puede resucitarlo, pero sí debe seguir sirviendo
+              // para los movimientos anteriores.
+              const strip = (s: Snapshot): Snapshot => ({
+                blocks: s.blocks.filter((b) => b.id !== id),
+                dirty: new Set([...s.dirty].filter((d) => d !== id)),
+              });
+              pastRef.current = pastRef.current.map(strip);
+              futureRef.current = futureRef.current.map(strip);
+              router.refresh();
             })
           }
           onDuplicate={() =>
@@ -748,7 +855,12 @@ export function PageEditor({
             startTransition(async () => {
               const result = await duplicateBlock(selected.id);
               setMessage(result.ok ? 'Block duplicated' : result.error);
-              if (result.ok) router.refresh();
+              // Un bloque nuevo no existe en el iframe, y a diferencia del
+              // borrado no se puede fabricar a mano: hay que recargarlo.
+              if (result.ok) {
+                setPreviewKey((k) => k + 1);
+                router.refresh();
+              }
             })
           }
           onPageSaved={(next) =>

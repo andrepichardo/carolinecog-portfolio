@@ -419,6 +419,29 @@ select.admin-field {
   background: none;
 }
 
+/* Guía horizontal: el borde inferior de la franja de cabecera. */
+.editor-guide--h {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  width: auto;
+  height: 1px;
+}
+
+/* La guía que ha atrapado al bloque. Se marca mientras dura el arrastre para
+   que el salto no parezca que el ratón ha perdido el bloque. */
+.editor-guide--live {
+  background: rgb(47, 111, 237);
+  border-left-color: rgb(47, 111, 237);
+  box-shadow: 0 0 0 1px rgba(47, 111, 237, 0.35);
+}
+
+.editor-guide--center.editor-guide--live {
+  background: none;
+  border-left-style: solid;
+}
+
 /* Franja reservada a la cabecera: si un bloque cae aquí, chocará con el
    wordmark y el botón del menú. */
 .editor-chrome-zone {
@@ -439,4 +462,49 @@ select.admin-field {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+
+/* --- Lista reordenable (proyectos) ---------------------------------------
+   El agarre y la fila entera son arrastrables; `is-over` marca dónde caería
+   el elemento, que es la única pista de que el arrastre está haciendo algo. */
+
+.admin-reorder-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  cursor: grab;
+  background: transparent;
+  transition: background-color 120ms ease;
+}
+
+.admin-reorder-row:hover {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+
+.admin-reorder-row.is-dragging {
+  opacity: 0.45;
+  cursor: grabbing;
+}
+
+.admin-reorder-row.is-over {
+  box-shadow: inset 0 2px 0 0 var(--ink);
+}
+
+.admin-reorder-grip {
+  color: color-mix(in srgb, var(--ink) 40%, transparent);
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+/* Los botones de las flechas no deben arrancar un arrastre. */
+.admin-reorder-row button {
+  cursor: pointer;
+}
+
+.admin-reorder-row button:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
