@@ -21,6 +21,7 @@ import {
   type EditorAsset,
   type EditorBlock,
 } from './BlockInspector';
+import { applyBlockToPreview } from './live-preview';
 
 export interface EditorPage {
   id: string;
@@ -203,6 +204,23 @@ export function PageEditor({
   }, []);
 
   /**
+   * Refleja en la vista previa lo que hay en el inspector, sin guardarlo.
+   *
+   * También se anota el bloque en `live` para que el marco de selección y el
+   * panel de capas sigan al contenido: si solo se moviera lo de dentro del
+   * iframe, el marco se quedaría atrás y volvería el problema que ya tuvimos
+   * al arrastrar. No se marca como sucio —el inspector tiene su propio Save— ni
+   * se toca `blocks`, porque entonces el panel creería que no queda nada por
+   * guardar.
+   */
+  const [live, setLive] = useState<Record<string, EditorBlock>>({});
+  const previewInspector = useCallback((block: EditorBlock) => {
+    const doc = frameRef.current?.contentDocument;
+    if (doc) applyBlockToPreview(doc, block);
+    setLive((prev) => ({ ...prev, [block.id]: block }));
+  }, []);
+
+  /**
    * Take a block out of the preview straight away.
    *
    * Deleting happens on the server, and the iframe has no way of hearing about
@@ -268,6 +286,7 @@ export function PageEditor({
   useEffect(() => {
     setBlocks(initialBlocks);
     blocksRef.current = initialBlocks;
+    setLive({});
     pastRef.current = [];
     futureRef.current = [];
     setHistory({ past: 0, future: 0 });
@@ -705,7 +724,8 @@ export function PageEditor({
               </div>
 
               <div className="absolute inset-0">
-                {blocks.map((block) => {
+                {blocks.map((base) => {
+                  const block = live[base.id] ?? base;
                   const g = geometryOf(block);
                   if (g.hidden) return null;
                   // Viewport-pinned blocks (the wordmark, the menu button) sit
@@ -817,7 +837,11 @@ export function PageEditor({
           pages={pages}
           textStyles={textStyles}
           page={page}
-          onSaved={() => setPreviewKey((k) => k + 1)}
+          onPreview={previewInspector}
+          onSaved={() => {
+            setLive({});
+            setPreviewKey((k) => k + 1);
+          }}
           onDelete={() =>
             selected &&
             startTransition(async () => {

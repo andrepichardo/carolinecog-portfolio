@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import Image from 'next/image';
 import { updateBlock } from '@/lib/actions/content';
 import type { EditorPage } from './PageEditor';
@@ -95,6 +95,7 @@ export function BlockInspector({
   onDelete,
   onDuplicate,
   onPageSaved,
+  onPreview,
 }: {
   block: EditorBlock | null;
   viewport: 'desktop' | 'mobile';
@@ -107,6 +108,7 @@ export function BlockInspector({
   onDelete: () => void;
   onDuplicate: () => void;
   onPageSaved: (next: Partial<EditorPage>) => void;
+  onPreview: (block: EditorBlock) => void;
 }) {
   return (
     <div className="flex flex-col">
@@ -122,6 +124,7 @@ export function BlockInspector({
           onSaved={onSaved}
           onDelete={onDelete}
           onDuplicate={onDuplicate}
+          onPreview={onPreview}
         />
       ) : (
         <p className="admin-muted border-t border-(--rule-strong) py-4 text-[13px]">
@@ -237,6 +240,7 @@ function BlockForm({
   onSaved,
   onDelete,
   onDuplicate,
+  onPreview,
 }: {
   block: EditorBlock;
   viewport: 'desktop' | 'mobile';
@@ -247,10 +251,23 @@ function BlockForm({
   onSaved: () => void;
   onDelete: () => void;
   onDuplicate: () => void;
+  /** Pinta el estado actual del formulario en la vista previa, sin guardarlo. */
+  onPreview: (block: EditorBlock) => void;
 }) {
   const [form, setForm] = useState(block);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  // Cada cambio se refleja en la vista previa al instante. Se hace en un efecto
+  // y no en cada `setForm` para que valga igual para los treinta y tantos
+  // controles del panel sin repetir la llamada en cada uno.
+  const onPreviewRef = useRef(onPreview);
+  onPreviewRef.current = onPreview;
+  useEffect(() => {
+    onPreviewRef.current(form);
+  }, [form]);
+
+  const dirty = JSON.stringify(form) !== JSON.stringify(block);
 
   const paragraphs = ((form.text as { paragraphs?: Paragraph[] } | null)
     ?.paragraphs ?? []) as Paragraph[];
@@ -778,10 +795,20 @@ function BlockForm({
           type="button"
           className="admin-btn admin-btn--primary"
           onClick={save}
-          disabled={pending}
+          disabled={pending || !dirty}
         >
-          {pending ? 'Saving…' : 'Save block'}
+          {pending ? 'Saving…' : dirty ? 'Save block' : 'Saved'}
         </button>
+        {dirty ? (
+          <button
+            type="button"
+            className="admin-btn"
+            onClick={() => setForm(block)}
+            disabled={pending}
+          >
+            Discard
+          </button>
+        ) : null}
         <button
           type="button"
           className="admin-btn"

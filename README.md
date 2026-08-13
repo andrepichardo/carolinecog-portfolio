@@ -186,7 +186,9 @@ En `/admin`:
   su centro o su derecho, el que quede más cerca— y la guía que atrapa se
   ilumina; con Alt se coloca libremente. `Ctrl+Z` deshace y `Ctrl+Mayús+Z`
   rehace: un arrastre entero cuenta como un solo paso, igual que una ráfaga de
-  flechas sobre el mismo bloque.
+  flechas sobre el mismo bloque. Todo lo que se toca en el panel lateral
+  —tipografía, color, recorte, posición— **se ve al momento** en la vista
+  previa; `Save block` guarda y `Discard` deshace lo tanteado.
 - **Proyectos** — ficha técnica (cliente, año, supervisión) y proyecto
   siguiente. El orden se cambia arrastrando la lista de arriba, o con las
   flechas; se guarda la secuencia entera, así que no hay forma de dejar dos

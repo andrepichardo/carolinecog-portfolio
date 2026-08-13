@@ -94,6 +94,15 @@ Cada una costó una sesión de depuración. No volver a caer:
   bloque el elemento seguía dibujado hasta recargar. Un borrado se resuelve
   quitando el nodo a mano (`removeFromPreview`); lo que se crea o se duplica no
   se puede fabricar, así que ahí toca recargar el iframe subiendo `previewKey`.
+- **La vista previa se pinta a mano, no re-renderizando.** El inspector escribe
+  sus cambios directamente sobre el iframe (`live-preview.ts`), porque todo lo
+  que edita se dibuja con variables CSS. Dos trampas: hay que guardar el `style`
+  original de cada nodo y **partir de él en cada pasada**, o vaciar un campo
+  —que significa «hereda del estilo del proyecto», y el editor no conoce esos
+  estilos— dejaría en pantalla el último valor tecleado; y las funciones de
+  reponer tienen que ejecutarse **aunque el contenido sea nulo**, porque el
+  inspector convierte `image`/`shape` de null a objeto al editarlos y al
+  descartar volvían a null, saltándose la rama que lo limpiaba.
 - **`loading="eager"`, no `priority`, para el LCP.** Escritorio y móvil son dos
   maquetaciones sobre el mismo DOM y su imagen mayor **no es la misma**; un
   `<link rel=preload>` no entiende de media queries. Se marca una por viewport
