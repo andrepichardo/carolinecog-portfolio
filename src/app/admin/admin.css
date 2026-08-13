@@ -508,3 +508,9 @@ select.admin-field {
   opacity: 0.3;
   cursor: default;
 }
+
+/* Botón de alineación o interruptor que está activo ahora mismo. */
+.admin-btn.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}

@@ -108,7 +108,7 @@ export function BlockInspector({
   onDelete: () => void;
   onDuplicate: () => void;
   onPageSaved: (next: Partial<EditorPage>) => void;
-  onPreview: (block: EditorBlock) => void;
+  onPreview: (block: EditorBlock, assetUrl: string | null) => void;
 }) {
   return (
     <div className="flex flex-col">
@@ -252,11 +252,47 @@ function BlockForm({
   onDelete: () => void;
   onDuplicate: () => void;
   /** Pinta el estado actual del formulario en la vista previa, sin guardarlo. */
-  onPreview: (block: EditorBlock) => void;
+  onPreview: (block: EditorBlock, assetUrl: string | null) => void;
 }) {
   const [form, setForm] = useState(block);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  // --- subir una imagen sin salir del panel ---------------------------------
+  //
+  // Lo recién subido no está en `assets`, que viene del servidor, y refrescar
+  // para traerlo tiraría lo que hubiera sin guardar en este formulario. Así que
+  // se queda aquí y se junta con la lista al vuelo; la biblioteca lo verá en su
+  // próxima carga, porque el asset ya existe en la base.
+  const [uploaded, setUploaded] = useState<EditorAsset[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const allAssets = [...uploaded, ...assets];
+  // Espejo para el efecto de vista previa, que no debe volver a dispararse solo
+  // porque la lista de imágenes se reconstruya en cada render.
+  const allAssetsRef = useRef(allAssets);
+  allAssetsRef.current = allAssets;
+
+  const uploadAsset = async (file: File | undefined) => {
+    if (!file) return;
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch('/api/upload', { method: 'POST', body });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? `Could not upload ${file.name}`);
+      const asset = data.asset as EditorAsset;
+      setUploaded((prev) => [asset, ...prev]);
+      setForm((prev) => ({ ...prev, assetId: asset.id }));
+    } catch (cause) {
+      setUploadError(cause instanceof Error ? cause.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // Cada cambio se refleja en la vista previa al instante. Se hace en un efecto
   // y no en cada `setForm` para que valga igual para los treinta y tantos
@@ -264,7 +300,9 @@ function BlockForm({
   const onPreviewRef = useRef(onPreview);
   onPreviewRef.current = onPreview;
   useEffect(() => {
-    onPreviewRef.current(form);
+    // La url va aparte porque el iframe no conoce un archivo recién subido.
+    const url = allAssetsRef.current.find((a) => a.id === form.assetId)?.url ?? null;
+    onPreviewRef.current(form, url);
   }, [form]);
 
   const dirty = JSON.stringify(form) !== JSON.stringify(block);
@@ -317,6 +355,52 @@ function BlockForm({
   const isDesktop = viewport === 'desktop';
   const num = (v: number | null) => (v === null ? '' : String(v));
   const round = (n: number) => Math.round(n * 100) / 100;
+
+  // --- alineación dentro del container --------------------------------------
+  //
+  // Los tres botones de alineación solo mueven el bloque; el ancho completo es
+  // un interruptor aparte. Antes iban juntos y el resultado despistaba: tras
+  // poner un bloque a ancho completo, pulsar «Left» solo cambiaba la x y el
+  // ancho seguía ocupándolo todo, así que parecía que el botón no hacía nada.
+  const inner = container.width - container.gutter * 2;
+  const width = (isDesktop ? form.dW : form.mW) ?? 0;
+  const left = (isDesktop ? form.dX : form.mX) ?? 0;
+
+  const near = (a: number, b: number) => Math.abs(a - b) < 0.5;
+  const isFullWidth = near(left, container.gutter) && near(width, inner);
+
+  /** Alineación actual, deducida de la posición. */
+  const alignment: 'left' | 'center' | 'right' | 'free' = near(
+    left,
+    container.gutter,
+  )
+    ? 'left'
+    : near(left, container.width - container.gutter - width)
+      ? 'right'
+      : near(left, (container.width - width) / 2)
+        ? 'center'
+        : 'free';
+
+  /** Ancho previo al interruptor, para poder devolverlo al apagarlo. */
+  const widthBeforeFull = useRef<number | null>(null);
+
+  const placeAt = (mode: 'left' | 'center' | 'right', w: number) => ({
+    w,
+    x:
+      mode === 'left'
+        ? container.gutter
+        : mode === 'right'
+          ? container.width - container.gutter - w
+          : (container.width - w) / 2,
+  });
+
+  const setGeometry = ({ x, w }: { x: number; w: number }) =>
+    setForm({
+      ...form,
+      ...(isDesktop
+        ? { dX: round(x), dW: round(w) }
+        : { mX: round(x), mW: round(w) }),
+    });
   const kindLabel =
     block.kind === 'TEXT' ? 'Text' : block.kind === 'IMAGE' ? 'Image' : 'Shape';
 
@@ -373,38 +457,48 @@ function BlockForm({
                 ['Left', 'left'],
                 ['Centre', 'center'],
                 ['Right', 'right'],
-                ['Full width', 'full'],
               ] as const
             ).map(([label, mode]) => (
               <button
                 key={mode}
                 type="button"
-                className="admin-btn"
-                onClick={() => {
-                  const w = (isDesktop ? form.dW : form.mW) ?? 0;
-                  const inner = container.width - container.gutter * 2;
-                  const next =
-                    mode === 'left'
-                      ? { x: container.gutter, w }
-                      : mode === 'right'
-                        ? { x: container.width - container.gutter - w, w }
-                        : mode === 'center'
-                          ? { x: (container.width - w) / 2, w }
-                          : { x: container.gutter, w: inner };
-                  setForm({
-                    ...form,
-                    ...(isDesktop
-                      ? { dX: round(next.x), dW: round(next.w) }
-                      : { mX: round(next.x), mW: round(next.w) }),
-                  });
-                }}
+                className={`admin-btn${alignment === mode ? ' is-active' : ''}`}
+                aria-pressed={alignment === mode}
+                onClick={() => setGeometry(placeAt(mode, width))}
               >
                 {label}
               </button>
             ))}
           </div>
+
+          <button
+            type="button"
+            className={`admin-btn mt-2 w-full${isFullWidth ? ' is-active' : ''}`}
+            aria-pressed={isFullWidth}
+            onClick={() => {
+              if (isFullWidth) {
+                // Al apagarlo se recupera el ancho que tenía antes. Si el
+                // bloque ya llegó a ancho completo desde el servidor no hay
+                // nada que recordar, así que se vuelve al valor guardado.
+                const saved = (isDesktop ? block.dW : block.mW) ?? 0;
+                const restored =
+                  widthBeforeFull.current ??
+                  (saved && saved !== inner ? saved : Math.round(inner / 2));
+                setGeometry(placeAt(alignment === 'free' ? 'left' : alignment, restored));
+                widthBeforeFull.current = null;
+              } else {
+                widthBeforeFull.current = width;
+                setGeometry({ x: container.gutter, w: inner });
+              }
+            }}
+          >
+            {isFullWidth ? '✓ Full width' : 'Full width'}
+          </button>
+
           <p className="admin-muted mt-2 text-[11px]">
             The container is {container.width} units wide with a {container.gutter}-unit margin.
+            Left, centre and right move the block without resizing it; full width
+            is a switch, and turning it off brings back the previous width.
             Dragging snaps to those edges and to the centre line — by the block&rsquo;s
             own left edge, centre or right edge, whichever is closest. Hold Alt to
             place a block freely without snapping.
@@ -592,7 +686,7 @@ function BlockForm({
               }
             >
               <option value="">— none —</option>
-              {assets.map((a) => (
+              {allAssets.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.filename}
                 </option>
@@ -600,8 +694,37 @@ function BlockForm({
             </select>
           </Field>
 
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif,image/avif,image/svg+xml"
+              className="hidden"
+              onChange={(e) => {
+                uploadAsset(e.target.files?.[0]);
+                e.target.value = '';
+              }}
+            />
+            <button
+              type="button"
+              className="admin-btn"
+              disabled={uploading}
+              onClick={() => fileInput.current?.click()}
+            >
+              {uploading ? 'Uploading…' : '+ Upload image'}
+            </button>
+            <span className="admin-muted text-[11px]">
+              Goes straight into the library and is picked for this block.
+            </span>
+          </div>
+          {uploadError ? (
+            <p role="alert" className="text-[12px] text-(--danger)">
+              {uploadError}
+            </p>
+          ) : null}
+
           {form.assetId ? (
-            <AssetPreview asset={assets.find((a) => a.id === form.assetId)} />
+            <AssetPreview asset={allAssets.find((a) => a.id === form.assetId)} />
           ) : null}
 
           <Field label="Alt text">

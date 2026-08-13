@@ -214,11 +214,14 @@ export function PageEditor({
    * guardar.
    */
   const [live, setLive] = useState<Record<string, EditorBlock>>({});
-  const previewInspector = useCallback((block: EditorBlock) => {
-    const doc = frameRef.current?.contentDocument;
-    if (doc) applyBlockToPreview(doc, block);
-    setLive((prev) => ({ ...prev, [block.id]: block }));
-  }, []);
+  const previewInspector = useCallback(
+    (block: EditorBlock, assetUrl: string | null) => {
+      const doc = frameRef.current?.contentDocument;
+      if (doc) applyBlockToPreview(doc, block, assetUrl);
+      setLive((prev) => ({ ...prev, [block.id]: block }));
+    },
+    [],
+  );
 
   /**
    * Take a block out of the preview straight away.

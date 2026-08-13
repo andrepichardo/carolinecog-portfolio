@@ -71,8 +71,10 @@ animación se retira porque no aportaba nada y en `/contact` —que no llega a
 desplazarse— dejaba el logo a media altura sobre el texto para siempre.
 
 El editor del CMS dibuja estas guías sobre el lienzo (bordes, márgenes y eje
-central, más la franja de cabecera sombreada), ofrece alineación a izquierda,
-centro, derecha y ancho completo, y al arrastrar engancha a esas líneas.
+central, más la franja de cabecera sombreada) y al arrastrar engancha a esas
+líneas. La alineación —izquierda, centro, derecha— solo mueve el bloque; el
+ancho completo es un interruptor aparte que recuerda el ancho anterior para
+devolverlo al apagarlo.
 
 ### Diferencias intencionadas
 
@@ -194,7 +196,9 @@ En `/admin`:
   flechas; se guarda la secuencia entera, así que no hay forma de dejar dos
   proyectos en la misma posición.
 - **Imágenes** — biblioteca compartida, con subida a Vercel Blob y texto
-  alternativo. No deja borrar una imagen que esté en uso.
+  alternativo. Avisa antes de borrar una que esté en uso y dice dónde. También
+  se pueden subir desde el propio bloque, sin pasar por aquí: la nueva queda
+  elegida y se ve en la vista previa al momento.
 - **Tipografía** — los estilos compartidos del proyecto. Cambiar uno afecta a
   todos los textos que lo usan.
 - **Menú** — entradas del menú hamburguesa.

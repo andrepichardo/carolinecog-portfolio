@@ -120,6 +120,43 @@ function applyShape(el: HTMLElement, shape: ShapeContent) {
   }
 }
 
+/**
+ * Cambia la imagen que se ve, sin esperar a guardar.
+ *
+ * En el sitio la sirve next/image con su url optimizada y su `srcset`; aquí se
+ * apunta directamente al archivo del Blob y se vacía el `srcset`, que si no
+ * mandaría él. Es solo para mirar: al guardar, el iframe se recarga y vuelve a
+ * la versión optimizada.
+ *
+ * Los SVG no se tocan porque no se sirven en un `<img>`, sino incrustados en
+ * línea; ahí el cambio se ve al guardar.
+ */
+function applyAsset(el: HTMLElement, url: string | null | undefined) {
+  const img = el.querySelector<HTMLImageElement>('img');
+  if (!img) return;
+
+  const stored = img.dataset.rmSrc;
+  const original = stored ?? img.getAttribute('src') ?? '';
+  if (stored === undefined) {
+    img.dataset.rmSrc = original;
+    img.dataset.rmSrcset = img.getAttribute('srcset') ?? '';
+  }
+
+  if (!url) {
+    img.setAttribute('src', original);
+    img.setAttribute('srcset', img.dataset.rmSrcset ?? '');
+    return;
+  }
+  // Si la url ya está dentro de la que sirve next/image, es la misma imagen.
+  if (decodeURIComponent(original).includes(url)) {
+    img.setAttribute('src', original);
+    img.setAttribute('srcset', img.dataset.rmSrcset ?? '');
+    return;
+  }
+  img.setAttribute('src', url);
+  img.setAttribute('srcset', '');
+}
+
 function applyImage(el: HTMLElement, image: ImageContent) {
   const baseline = baselineOf(el);
   el.setAttribute('style', baseline.style);
@@ -143,8 +180,17 @@ function applyImage(el: HTMLElement, image: ImageContent) {
   }
 }
 
-/** Escribe el bloque completo en la vista previa. */
-export function applyBlockToPreview(doc: Document, block: EditorBlock) {
+/**
+ * Escribe el bloque completo en la vista previa.
+ *
+ * `assetUrl` es la url del archivo elegido en el inspector, que puede ser uno
+ * recién subido y por tanto desconocido para la página ya renderizada.
+ */
+export function applyBlockToPreview(
+  doc: Document,
+  block: EditorBlock,
+  assetUrl?: string | null
+) {
   const el = doc.querySelector<HTMLElement>(`[data-id="${CSS.escape(block.id)}"]`);
   if (!el) return;
 
@@ -182,5 +228,8 @@ export function applyBlockToPreview(doc: Document, block: EditorBlock) {
   if (shape) applyShape(shape, (block.shape ?? {}) as ShapeContent);
 
   const image = el.querySelector<HTMLElement>('.rm-image');
-  if (image) applyImage(image, (block.image ?? {}) as ImageContent);
+  if (image) {
+    applyImage(image, (block.image ?? {}) as ImageContent);
+    applyAsset(image, assetUrl);
+  }
 }
