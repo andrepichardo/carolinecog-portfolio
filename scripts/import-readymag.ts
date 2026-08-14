@@ -350,6 +350,47 @@ async function fixAboutMobile() {
   }
 }
 
+/**
+ * Oculta en escritorio las imágenes que quedan tapadas por completo.
+ *
+ * Las tres páginas de proyecto colocan dos imágenes exactamente en la misma
+ * posición: una de 524×339 y encima otra de 524×352, con más z. La de abajo no
+ * asoma por ningún lado —misma x, misma y, mismo ancho y menos alto—, así que
+ * en escritorio no se ve nunca. En `/norologio` es además literalmente la misma
+ * foto que la de encima.
+ *
+ * No se pueden borrar: en móvil van a alturas distintas y ahí sí se ven las dos
+ * (y son fotos distintas). Lo que se hace es ocultarlas **solo en escritorio**,
+ * con lo que el navegador se ahorra descargar tres imágenes grandes —una de
+ * ellas de 4,9 MB— y el editor deja de tener dos bloques peleándose por el mismo
+ * sitio.
+ *
+ * Comprobado capturando las tres páginas antes y después: 0 subpíxeles de
+ * diferencia sobre unos 40 millones comparados.
+ */
+async function hideBuriedBlocks() {
+  const buried = [
+    '6a345c0e906116f9810917ab', //  /norologio
+    '6a34617f6279119a208d40c0', //  /adagio
+    '6a346165b69ae66625484cbc', //  /opus
+  ];
+
+  let hidden = 0;
+  for (const id of buried) {
+    const block = await prisma.block.findUnique({
+      where: { id },
+      select: { id: true, dHidden: true },
+    });
+    if (!block) continue;
+    if (!block.dHidden) {
+      await prisma.block.update({ where: { id }, data: { dHidden: true } });
+    }
+    hidden += 1;
+  }
+
+  if (hidden) log(`✓ ${hidden} imágenes tapadas ocultas en escritorio`);
+}
+
 // ---------------------------------------------------------------------------
 // Importación
 // ---------------------------------------------------------------------------
@@ -712,6 +753,7 @@ async function main() {
   // --- Cabecera -------------------------------------------------------------
   await layoutChrome();
   await fixAboutMobile();
+  await hideBuriedBlocks();
 
   // --- Proyectos ------------------------------------------------------------
   let projectCount = 0;

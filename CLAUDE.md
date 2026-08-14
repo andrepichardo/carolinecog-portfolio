@@ -119,8 +119,12 @@ Cada una costó una sesión de depuración. No volver a caer:
 - **Las tres páginas de proyecto apilan dos imágenes en el mismo sitio** en
   escritorio (524×339 debajo, 524×352 encima, misma x/y): la de abajo queda
   tapada por completo. **No son bloques que sobren**: en móvil van a alturas
-  distintas y las dos se ven. Está así en el original; comprobado widget a
-  widget antes de tocar nada.
+  distintas y ahí sí se ven las dos, con fotos distintas. Está así en el
+  original. Lo que se hace es ocultarlas solo en escritorio
+  (`hideBuriedBlocks()`), que ahorra tres descargas grandes sin cambiar nada:
+  comprobado capturando las tres páginas antes y después, 0 subpíxeles de
+  diferencia sobre 40 millones. Por eso la fidelidad de escritorio empareja 108
+  bloques y no 111.
 - **El importador verifica su salida.** El contador de bloques cuenta llamadas
   al upsert, no filas: una imagen de `/norologio` estuvo ausente varias
   importaciones seguidas mientras el resumen decía que estaban todas. Ahora

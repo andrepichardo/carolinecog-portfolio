@@ -38,7 +38,7 @@ original.
 visor de Readymag), los assets y capturas de referencia. La comparación se hizo
 emparejando cada bloque con su widget original por id y midiendo su rectángulo:
 
-- **Escritorio**: 111 bloques comparados, 12 fuera de ±2 px — exactamente los
+- **Escritorio**: 108 bloques comparados, 12 fuera de ±2 px — exactamente los
   dos elementos de cabecera de cada página, reposicionados a propósito. Todo el
   contenido coincide.
 - **Móvil**: 108 bloques, 19 fuera de ±2 px: los 15 de cabecera (wordmark y
@@ -90,6 +90,11 @@ devolverlo al apagarlo.
   178 unidades en blanco entre el último párrafo y la primera sección, más del
   triple de la separación que la propia página usa entre secciones; todo lo que
   va debajo sube 118 unidades y el alto de la página móvil pasa de 1267 a 1149.
+- **Imágenes tapadas**: cada página de proyecto coloca dos imágenes exactamente
+  en la misma posición y la de abajo no llega a asomar. En móvil van a alturas
+  distintas y las dos se ven, así que no se pueden quitar; se ocultan solo en
+  escritorio. El resultado es idéntico píxel a píxel y ahorra tres descargas
+  grandes, una de ellas de 4,9 MB.
 - **Botón del menú en móvil**: el original lo coloca en coordenadas sin escalar,
   de modo que solo queda bien alineado en pantallas de exactamente 320 px; en
   cualquier móvil actual aparece separado del borde. Aquí escala como el resto
